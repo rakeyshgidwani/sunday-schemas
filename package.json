@@ -1,0 +1,47 @@
+{
+  "name": "sunday-schemas",
+  "version": "1.0.0",
+  "description": "Schema registry for Sunday platform event definitions and API contracts",
+  "main": "codegen/ts/index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "validate-schemas": "npx ajv compile -s 'schemas/json/*.json'",
+    "validate-examples": "node scripts/validate-examples.js",
+    "lint-openapi": "spectral lint openapi/ui.v1.yaml",
+    "lint-json": "jsonlint schemas/**/*.json",
+    "validate": "npm run validate-schemas && npm run validate-examples",
+    "lint": "npm run lint-openapi && npm run lint-json",
+    "test": "npm run validate && npm run lint",
+    "generate-ts": "json-schema-to-typescript -i schemas/json -o codegen/ts",
+    "generate-openapi-ts": "openapi-typescript openapi/ui.v1.yaml -o codegen/ts/api.ts",
+    "generate": "npm run generate-ts && npm run generate-openapi-ts",
+    "check-compatibility": "echo 'Compatibility checks will be implemented in Phase 4'",
+    "build": "npm run validate && npm run generate",
+    "dev": "npm run validate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rakeyshgidwani/sunday-schemas.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/rakeyshgidwani/sunday-schemas/issues"
+  },
+  "homepage": "https://github.com/rakeyshgidwani/sunday-schemas#readme",
+  "devDependencies": {
+    "@stoplight/spectral-cli": "^6.15.0",
+    "ajv": "^8.17.1",
+    "js-yaml": "^4.1.0",
+    "json-schema-diff": "^0.18.1",
+    "json-schema-to-typescript": "^15.0.4",
+    "jsonlint": "^1.6.3",
+    "openapi-diff": "^0.24.1",
+    "openapi-typescript": "^7.9.1",
+    "spectral": "^0.0.0"
+  }
+}

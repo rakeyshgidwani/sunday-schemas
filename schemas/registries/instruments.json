@@ -1,0 +1,11 @@
+{
+  "_comment": "Canonical instrument registry - populated by normalizer service",
+  "_format": "Each entry maps venue-specific instrument IDs to canonical instrument_id",
+  "_example": {
+    "pm_us_election_2028_winner": {
+      "polymarket": "0x1234...",
+      "kalshi": "PRES-28"
+    }
+  },
+  "instruments": []
+}

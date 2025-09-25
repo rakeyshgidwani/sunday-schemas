@@ -16,6 +16,20 @@ This document outlines the implementation plan for the Sunday-schemas repository
 **Timeline:** 32 days across 6 sprints
 **Team:** Schema Working Group (UI, Platform, Data engineers)
 
+## Phase Index
+
+| Phase | Name | Duration | Key Deliverables |
+|-------|------|----------|------------------|
+| [Phase 1](#phase-1-foundation-setup-5-days) | Foundation Setup | 5 days | Repository structure, registries, tooling |
+| [Phase 2](#phase-2-schema-definitions-8-days) | Schema Definitions | 8 days | All JSON schemas (raw, md, insights, infra) |
+| [Phase 3](#phase-3-openapi-specification-3-days) | OpenAPI Specification | 3 days | UI BFF API specification |
+| [Phase 4](#phase-4-validation--tooling-6-days) | Validation & Tooling | 6 days | CI validation, compatibility gates |
+| [Phase 5](#phase-5-documentation-2-days) | Documentation | 2 days | Mapping docs, example maintenance |
+| [Phase 6](#phase-6-code-generation--distribution-6-days) | Code Generation & Distribution | 6 days | TypeScript/Go generation, publishing |
+| [Phase 7](#phase-7-governance-process-2-days) | Governance Process | 2 days | Schema Working Group processes |
+
+**Total Duration:** 32 days
+
 ---
 
 ## Phase 1: Foundation Setup (5 days)

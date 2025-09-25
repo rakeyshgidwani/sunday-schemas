@@ -1,0 +1,34 @@
+{
+  "raw.v0": {
+    "topics": ["raw.venue.polymarket.orderbook", "raw.venue.polymarket.trades", "raw.venue.kalshi.orderbook", "raw.venue.kalshi.trades"],
+    "description": "Raw venue data envelope from connectors"
+  },
+  "md.orderbook.delta.v1": {
+    "topic": "md.normalized.orderbook",
+    "description": "Normalized orderbook deltas with optional snapshots"
+  },
+  "md.trade.v1": {
+    "topic": "md.trades",
+    "description": "Normalized trade events"
+  },
+  "insights.arb.lite.v1": {
+    "topic": "insights.arb.lite",
+    "description": "Arbitrage opportunities (lite version)"
+  },
+  "insights.movers.v1": {
+    "topic": "insights.movers",
+    "description": "Price movers over time windows"
+  },
+  "insights.whales.lite.v1": {
+    "topic": "insights.whales.lite",
+    "description": "Whale flow detection (lite version)"
+  },
+  "insights.unusual.v1": {
+    "topic": "insights.unusual",
+    "description": "Unusual volume/volatility activity"
+  },
+  "infra.venue_health.v1": {
+    "topic": "infra.venue_health",
+    "description": "Venue connector health monitoring"
+  }
+}
