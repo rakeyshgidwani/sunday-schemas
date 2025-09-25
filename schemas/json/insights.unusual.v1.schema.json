@@ -1,0 +1,44 @@
+{
+  "$id": "https://schemas.sunday.dev/insights.unusual.v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Unusual Activity v1",
+  "description": "Unusual volume or volatility activity detection",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "insights.unusual.v1",
+      "$comment": "Schema identifier"
+    },
+    "instrument_id": {
+      "type": "string",
+      "minLength": 1,
+      "$comment": "Canonical instrument identifier"
+    },
+    "metric": {
+      "enum": ["volume", "volatility"],
+      "$comment": "Type of unusual activity detected"
+    },
+    "window": {
+      "enum": ["1h", "24h"],
+      "$comment": "Time window for analysis"
+    },
+    "zscore": {
+      "type": "number",
+      "$comment": "Z-score indicating how unusual the activity is (higher = more unusual)"
+    },
+    "ts_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "$comment": "Epoch milliseconds"
+    }
+  },
+  "required": [
+    "schema",
+    "instrument_id",
+    "metric",
+    "window",
+    "zscore",
+    "ts_ms"
+  ]
+}

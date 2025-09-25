@@ -1,0 +1,11 @@
+{
+  "schema": "insights.arb.lite.v1",
+  "instrument_id": "pm_us_election_2028_winner",
+  "long_venue": "polymarket",
+  "short_venue": "kalshi",
+  "edge_bps": 43.5,
+  "depth_tier": "M",
+  "persistence_ms": 120000,
+  "last_seen_ms": 1758763048123,
+  "fees_included": false
+}

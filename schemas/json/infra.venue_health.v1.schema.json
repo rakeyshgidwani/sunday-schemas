@@ -1,0 +1,49 @@
+{
+  "$id": "https://schemas.sunday.dev/infra.venue_health.v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Venue Health v1",
+  "description": "Venue connector health monitoring",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "infra.venue_health.v1",
+      "$comment": "Schema identifier"
+    },
+    "venue_id": {
+      "enum": ["polymarket", "kalshi"],
+      "$comment": "Venue being monitored"
+    },
+    "status": {
+      "enum": ["CONNECTED", "DEGRADED", "STALE"],
+      "$comment": "Current health status of venue connector"
+    },
+    "last_event_ts_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "$comment": "Epoch milliseconds of last event received from venue"
+    },
+    "messages_per_second": {
+      "type": "number",
+      "minimum": 0,
+      "$comment": "Current message throughput from venue (optional)"
+    },
+    "staleness_seconds": {
+      "type": "number",
+      "minimum": 0,
+      "$comment": "How stale the data is in seconds (optional)"
+    },
+    "observed_at_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "$comment": "Epoch milliseconds when this health check was performed"
+    }
+  },
+  "required": [
+    "schema",
+    "venue_id",
+    "status",
+    "last_event_ts_ms",
+    "observed_at_ms"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "schema": "infra.venue_health.v1",
+  "venue_id": "polymarket",
+  "status": "STALE",
+  "last_event_ts_ms": 1758762800000,
+  "staleness_seconds": 248.0,
+  "observed_at_ms": 1758763048000
+}

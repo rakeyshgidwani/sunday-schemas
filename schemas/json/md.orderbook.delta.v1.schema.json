@@ -1,0 +1,92 @@
+{
+  "$id": "https://schemas.sunday.dev/md.orderbook.delta.v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Normalized Order Book Delta v1",
+  "description": "Normalized orderbook deltas with optional snapshots. Prices are implied probability in [0.0, 1.0].",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "md.orderbook.delta.v1",
+      "$comment": "Schema identifier"
+    },
+    "instrument_id": {
+      "type": "string",
+      "minLength": 1,
+      "$comment": "Canonical instrument identifier"
+    },
+    "venue_id": {
+      "enum": ["polymarket", "kalshi"],
+      "$comment": "Venue identifier from venues.json registry"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0,
+      "$comment": "Monotonic sequence number per (instrument_id, venue_id) pair. If gap detected, next message MUST set is_snapshot=true"
+    },
+    "ts_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "$comment": "Epoch milliseconds"
+    },
+    "bids": {
+      "type": "array",
+      "description": "Array of [price, size] pairs where price is implied probability [0.0, 1.0]",
+      "items": {
+        "type": "array",
+        "items": [
+          {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "$comment": "Implied probability price"
+          },
+          {
+            "type": "number",
+            "minimum": 0,
+            "$comment": "Size/quantity"
+          }
+        ],
+        "minItems": 2,
+        "maxItems": 2
+      }
+    },
+    "asks": {
+      "type": "array",
+      "description": "Array of [price, size] pairs where price is implied probability [0.0, 1.0]",
+      "items": {
+        "type": "array",
+        "items": [
+          {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "$comment": "Implied probability price"
+          },
+          {
+            "type": "number",
+            "minimum": 0,
+            "$comment": "Size/quantity"
+          }
+        ],
+        "minItems": 2,
+        "maxItems": 2
+      }
+    },
+    "is_snapshot": {
+      "type": "boolean",
+      "default": false,
+      "$comment": "True when full book is supplied after a sequence gap, before resuming deltas"
+    }
+  },
+  "required": [
+    "schema",
+    "instrument_id",
+    "venue_id",
+    "seq",
+    "ts_ms",
+    "bids",
+    "asks",
+    "is_snapshot"
+  ]
+}

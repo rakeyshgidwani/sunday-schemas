@@ -1,0 +1,8 @@
+{
+  "schema": "insights.unusual.v1",
+  "instrument_id": "pm_crypto_btc_100k_2025",
+  "metric": "volume",
+  "window": "24h",
+  "zscore": 4.2,
+  "ts_ms": 1758763048901
+}

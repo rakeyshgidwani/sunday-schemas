@@ -1,0 +1,9 @@
+{
+  "schema": "insights.whales.lite.v1",
+  "instrument_id": "kalshi_pres_28_winner",
+  "venue_id": "kalshi",
+  "impact": "HIGH",
+  "direction": "buy",
+  "post_move_bps": 275,
+  "ts_ms": 1758763048789
+}

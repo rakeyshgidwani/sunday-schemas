@@ -1,0 +1,18 @@
+{
+  "schema": "md.orderbook.delta.v1",
+  "instrument_id": "pm_us_election_2028_winner",
+  "venue_id": "polymarket",
+  "seq": 12345,
+  "ts_ms": 1758763048123,
+  "bids": [
+    [0.63, 1000.0],
+    [0.62, 500.0],
+    [0.61, 750.0]
+  ],
+  "asks": [
+    [0.64, 800.0],
+    [0.65, 1200.0],
+    [0.66, 300.0]
+  ],
+  "is_snapshot": false
+}

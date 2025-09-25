@@ -1,0 +1,60 @@
+{
+  "$id": "https://schemas.sunday.dev/insights.arb.lite.v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Arbitrage (Lite) v1",
+  "description": "Arbitrage opportunities between venues (lite version)",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "insights.arb.lite.v1",
+      "$comment": "Schema identifier"
+    },
+    "instrument_id": {
+      "type": "string",
+      "minLength": 1,
+      "$comment": "Canonical instrument identifier"
+    },
+    "long_venue": {
+      "enum": ["polymarket", "kalshi"],
+      "$comment": "Venue to go long (buy) for arbitrage"
+    },
+    "short_venue": {
+      "enum": ["polymarket", "kalshi"],
+      "$comment": "Venue to go short (sell) for arbitrage"
+    },
+    "edge_bps": {
+      "type": "number",
+      "$comment": "Arbitrage edge in basis points"
+    },
+    "depth_tier": {
+      "enum": ["S", "M", "L"],
+      "$comment": "Depth tier: Small, Medium, Large"
+    },
+    "persistence_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "$comment": "How long this arbitrage opportunity has persisted in milliseconds"
+    },
+    "last_seen_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "$comment": "Epoch milliseconds when opportunity was last observed"
+    },
+    "fees_included": {
+      "type": "boolean",
+      "$comment": "Whether trading fees are included in edge calculation"
+    }
+  },
+  "required": [
+    "schema",
+    "instrument_id",
+    "long_venue",
+    "short_venue",
+    "edge_bps",
+    "depth_tier",
+    "persistence_ms",
+    "last_seen_ms",
+    "fees_included"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "schema": "md.trade.v1",
+  "instrument_id": "pm_us_election_2028_winner",
+  "venue_id": "polymarket",
+  "ts_ms": 1758763048123,
+  "side": "buy",
+  "prob": 0.63,
+  "size": 1200,
+  "notional_usd": 756
+}

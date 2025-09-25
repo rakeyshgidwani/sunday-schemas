@@ -1,0 +1,19 @@
+{
+  "schema": "raw.v0",
+  "venue_id": "kalshi",
+  "stream": "trades",
+  "instrument_native": "PRES-28",
+  "partition_key": "kalshi_trades_PRES-28",
+  "ts_event_ms": 1758763048456,
+  "ts_ingest_ms": 1758763048458,
+  "is_historical": false,
+  "payload": {
+    "market_ticker": "PRES-28",
+    "trade_id": "12345678",
+    "timestamp": 1758763048456,
+    "side": "yes",
+    "price_cents": 63,
+    "count": 100,
+    "taker_order_id": "order_abc123"
+  }
+}

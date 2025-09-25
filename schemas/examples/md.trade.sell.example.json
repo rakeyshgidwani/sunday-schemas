@@ -1,0 +1,9 @@
+{
+  "schema": "md.trade.v1",
+  "instrument_id": "kalshi_pres_28_winner",
+  "venue_id": "kalshi",
+  "ts_ms": 1758763048789,
+  "side": "sell",
+  "prob": 0.58,
+  "size": 500
+}

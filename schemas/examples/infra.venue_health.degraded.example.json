@@ -1,0 +1,9 @@
+{
+  "schema": "infra.venue_health.v1",
+  "venue_id": "kalshi",
+  "status": "DEGRADED",
+  "last_event_ts_ms": 1758763000000,
+  "messages_per_second": 152.4,
+  "staleness_seconds": 2.7,
+  "observed_at_ms": 1758763048000
+}

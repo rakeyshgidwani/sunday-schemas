@@ -1,0 +1,49 @@
+{
+  "$id": "https://schemas.sunday.dev/insights.whales.lite.v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Whale Flows (Lite) v1",
+  "description": "Large trade flow detection (lite version)",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "insights.whales.lite.v1",
+      "$comment": "Schema identifier"
+    },
+    "instrument_id": {
+      "type": "string",
+      "minLength": 1,
+      "$comment": "Canonical instrument identifier"
+    },
+    "venue_id": {
+      "enum": ["polymarket", "kalshi"],
+      "$comment": "Venue where whale flow was detected"
+    },
+    "impact": {
+      "enum": ["LOW", "MED", "HIGH"],
+      "$comment": "Market impact level of the whale flow"
+    },
+    "direction": {
+      "enum": ["buy", "sell"],
+      "$comment": "Direction of the whale flow"
+    },
+    "post_move_bps": {
+      "type": "integer",
+      "$comment": "Price movement after whale flow in basis points"
+    },
+    "ts_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "$comment": "Epoch milliseconds"
+    }
+  },
+  "required": [
+    "schema",
+    "instrument_id",
+    "venue_id",
+    "impact",
+    "direction",
+    "post_move_bps",
+    "ts_ms"
+  ]
+}

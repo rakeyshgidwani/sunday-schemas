@@ -1,0 +1,66 @@
+{
+  "$id": "https://schemas.sunday.dev/raw.v0.envelope.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Raw Envelope v0",
+  "description": "Raw venue data envelope from connectors",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "raw.v0",
+      "$comment": "Schema identifier for this envelope version"
+    },
+    "venue_id": {
+      "enum": ["polymarket", "kalshi"],
+      "$comment": "Venue identifier from venues.json registry"
+    },
+    "stream": {
+      "enum": ["orderbook", "trades", "status"],
+      "$comment": "Data stream type from the venue"
+    },
+    "instrument_native": {
+      "type": "string",
+      "minLength": 1,
+      "$comment": "Venue-specific instrument identifier"
+    },
+    "partition_key": {
+      "type": "string",
+      "minLength": 1,
+      "$comment": "Kafka partition key for consistent routing"
+    },
+    "ts_event_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "$comment": "Epoch milliseconds from venue event timestamp, if available"
+    },
+    "ts_ingest_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "$comment": "Epoch milliseconds when connector enqueued the event"
+    },
+    "is_historical": {
+      "type": "boolean",
+      "default": false,
+      "$comment": "True if this is historical/backfill data"
+    },
+    "backfill_ts_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "$comment": "Epoch milliseconds when backfill job ran (optional)"
+    },
+    "payload": {
+      "type": "object",
+      "$comment": "Single venue message object (no arrays in Phase 1)"
+    }
+  },
+  "required": [
+    "schema",
+    "venue_id",
+    "stream",
+    "instrument_native",
+    "partition_key",
+    "ts_event_ms",
+    "ts_ingest_ms",
+    "payload"
+  ]
+}

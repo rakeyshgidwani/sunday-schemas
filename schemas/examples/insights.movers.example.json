@@ -1,0 +1,10 @@
+{
+  "schema": "insights.movers.v1",
+  "instrument_id": "pm_fed_rate_cut_dec_2025",
+  "window": "1h",
+  "prob_now": 0.68,
+  "prob_prev": 0.55,
+  "delta_bps": 1300,
+  "imbalance_index": 85,
+  "ts_ms": 1758763048456
+}

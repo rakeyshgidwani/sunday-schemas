@@ -1,0 +1,60 @@
+{
+  "$id": "https://schemas.sunday.dev/insights.movers.v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Movers v1",
+  "description": "Price movers over time windows",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "insights.movers.v1",
+      "$comment": "Schema identifier"
+    },
+    "instrument_id": {
+      "type": "string",
+      "minLength": 1,
+      "$comment": "Canonical instrument identifier"
+    },
+    "window": {
+      "enum": ["1h", "24h"],
+      "$comment": "Time window for price movement calculation"
+    },
+    "prob_now": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "$comment": "Current implied probability"
+    },
+    "prob_prev": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "$comment": "Previous implied probability at window start"
+    },
+    "delta_bps": {
+      "type": "integer",
+      "$comment": "Price change in basis points (can be negative)"
+    },
+    "imbalance_index": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "$comment": "Order flow imbalance index (0-100)"
+    },
+    "ts_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "$comment": "Epoch milliseconds"
+    }
+  },
+  "required": [
+    "schema",
+    "instrument_id",
+    "window",
+    "prob_now",
+    "prob_prev",
+    "delta_bps",
+    "imbalance_index",
+    "ts_ms"
+  ]
+}

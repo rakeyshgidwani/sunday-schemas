@@ -1,0 +1,20 @@
+{
+  "schema": "md.orderbook.delta.v1",
+  "instrument_id": "pm_us_election_2028_winner",
+  "venue_id": "kalshi",
+  "seq": 12350,
+  "ts_ms": 1758763048567,
+  "bids": [
+    [0.62, 2000.0],
+    [0.61, 1500.0],
+    [0.60, 800.0],
+    [0.59, 1000.0]
+  ],
+  "asks": [
+    [0.65, 1800.0],
+    [0.66, 900.0],
+    [0.67, 600.0],
+    [0.68, 400.0]
+  ],
+  "is_snapshot": true
+}
