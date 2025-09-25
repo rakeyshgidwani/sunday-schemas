@@ -19,6 +19,7 @@
     "generate": "npm run generate-ts && npm run generate-openapi-ts",
     "check-compatibility": "node scripts/check-compatibility.js",
     "check-changelog": "node scripts/check-changelog.js",
+    "analyze-coverage": "node scripts/analyze-coverage.js",
     "ci-validate": "npm run validate && npm run lint && npm run check-compatibility",
     "build": "npm run validate && npm run generate",
     "dev": "npm run validate"
