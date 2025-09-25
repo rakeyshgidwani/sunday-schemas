@@ -1,0 +1,692 @@
+openapi: 3.1.0
+info:
+  title: Sunday UI BFF API
+  description: |
+    Backend-for-Frontend API for Sunday UI application.
+    Provides market data, insights, and infrastructure health endpoints.
+
+    All endpoints require authentication at the gateway level (not modeled in this spec).
+  version: 1.0.0
+  contact:
+    name: Sunday Platform Team
+  license:
+    name: Internal Use Only
+
+servers:
+  - url: /ui
+    description: UI BFF endpoints (auth required at gateway)
+
+paths:
+  /markets:
+    get:
+      summary: List markets
+      description: Returns a list of available prediction markets with current pricing and metadata
+      operationId: getMarkets
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of markets to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+        - name: venues
+          in: query
+          description: Comma-separated list of venues to filter by
+          schema:
+            type: string
+            example: "polymarket,kalshi"
+        - name: category
+          in: query
+          description: Market category filter
+          schema:
+            type: string
+            enum: [politics, crypto, economics, sports, weather]
+      responses:
+        '200':
+          description: List of markets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketListResponse'
+              examples:
+                markets_list:
+                  summary: Sample market list
+                  value:
+                    markets:
+                      - instrument_id: "pm_us_election_2028_winner"
+                        title: "US Presidential Election 2028 Winner"
+                        venues: ["polymarket", "kalshi"]
+                        implied_prob_now: 0.63
+                        prob_change_1h: 0.02
+                        prob_change_24h: -0.05
+                        volume_24h: 125000.50
+                        time_to_resolution: "2028-11-07T00:00:00Z"
+                        deep_link: "https://ui.sunday.dev/markets/pm_us_election_2028_winner"
+                        category: "politics"
+                    total_count: 42
+                    page_info:
+                      has_next_page: true
+                      cursor: "eyJpZCI6InBtX3VzX2VsZWN0aW9uXzIwMjhfd2lubmVyIn0="
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /arb:
+    get:
+      summary: List arbitrage opportunities
+      description: Returns current arbitrage opportunities between venues
+      operationId: getArbitrageOpportunities
+      parameters:
+        - name: min_edge_bps
+          in: query
+          description: Minimum edge in basis points
+          schema:
+            type: integer
+            minimum: 0
+            default: 10
+        - name: venues
+          in: query
+          description: Comma-separated list of venues
+          schema:
+            type: string
+            example: "polymarket,kalshi"
+        - name: depth_tier
+          in: query
+          description: Depth tier filter
+          schema:
+            type: string
+            enum: [S, M, L]
+        - name: limit
+          in: query
+          description: Maximum number of opportunities to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        '200':
+          description: List of arbitrage opportunities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ArbLite'
+              examples:
+                arbitrage_opportunities:
+                  summary: Active arbitrage opportunities
+                  value:
+                    - instrument_id: "pm_us_election_2028_winner"
+                      long_venue: "polymarket"
+                      short_venue: "kalshi"
+                      edge_bps: 43.5
+                      depth_tier: "M"
+                      persistence_ms: 120000
+                      last_seen_ms: 1758763048123
+                      fees_included: false
+                    - instrument_id: "pm_fed_rate_cut_dec_2025"
+                      long_venue: "kalshi"
+                      short_venue: "polymarket"
+                      edge_bps: 28.2
+                      depth_tier: "L"
+                      persistence_ms: 45000
+                      last_seen_ms: 1758763048456
+                      fees_included: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /movers:
+    get:
+      summary: List price movers
+      description: Returns instruments with significant price movements
+      operationId: getMovers
+      parameters:
+        - name: window
+          in: query
+          description: Time window for movement calculation
+          required: true
+          schema:
+            type: string
+            enum: [1h, 24h]
+        - name: min_delta_bps
+          in: query
+          description: Minimum price change in basis points
+          schema:
+            type: integer
+            default: 100
+        - name: limit
+          in: query
+          description: Maximum number of movers to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        '200':
+          description: List of price movers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Mover'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /flows:
+    get:
+      summary: List whale flows
+      description: Returns detected large trade flows (whale activity)
+      operationId: getWhaleFlows
+      parameters:
+        - name: impact
+          in: query
+          description: Minimum impact level
+          schema:
+            type: string
+            enum: [LOW, MED, HIGH]
+        - name: venues
+          in: query
+          description: Comma-separated list of venues
+          schema:
+            type: string
+            example: "polymarket,kalshi"
+        - name: limit
+          in: query
+          description: Maximum number of flows to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        '200':
+          description: List of whale flows
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WhaleLite'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /unusual:
+    get:
+      summary: List unusual activity
+      description: Returns detected unusual volume or volatility activity
+      operationId: getUnusualActivity
+      parameters:
+        - name: metric
+          in: query
+          description: Type of unusual activity
+          schema:
+            type: string
+            enum: [volume, volatility]
+        - name: window
+          in: query
+          description: Time window for analysis
+          schema:
+            type: string
+            enum: [1h, 24h]
+        - name: min_zscore
+          in: query
+          description: Minimum z-score threshold
+          schema:
+            type: number
+            default: 2.0
+        - name: limit
+          in: query
+          description: Maximum number of activities to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        '200':
+          description: List of unusual activities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Unusual'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /calendar:
+    get:
+      summary: List resolution events
+      description: Returns upcoming market resolution events and deadlines
+      operationId: getCalendar
+      parameters:
+        - name: days_ahead
+          in: query
+          description: Number of days ahead to look
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 365
+            default: 30
+        - name: venues
+          in: query
+          description: Comma-separated list of venues
+          schema:
+            type: string
+            example: "polymarket,kalshi"
+        - name: limit
+          in: query
+          description: Maximum number of events to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        '200':
+          description: List of resolution events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResolutionEvent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /venue-health:
+    get:
+      summary: Get venue health status
+      description: Returns current health status of all venue connectors
+      operationId: getVenueHealth
+      responses:
+        '200':
+          description: List of venue health statuses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VenueHealth'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+components:
+  schemas:
+    # Reused from event schemas
+    ArbLite:
+      type: object
+      description: Arbitrage opportunity (lite version)
+      properties:
+        instrument_id:
+          type: string
+          description: Canonical instrument identifier
+        long_venue:
+          type: string
+          enum: [polymarket, kalshi]
+          description: Venue to go long for arbitrage
+        short_venue:
+          type: string
+          enum: [polymarket, kalshi]
+          description: Venue to go short for arbitrage
+        edge_bps:
+          type: number
+          description: Arbitrage edge in basis points
+        depth_tier:
+          type: string
+          enum: [S, M, L]
+          description: Depth tier (Small, Medium, Large)
+        persistence_ms:
+          type: integer
+          minimum: 0
+          description: How long opportunity has persisted (ms)
+        last_seen_ms:
+          type: integer
+          minimum: 0
+          description: When opportunity was last observed (epoch ms)
+        fees_included:
+          type: boolean
+          description: Whether fees are included in edge calculation
+      required:
+        - instrument_id
+        - long_venue
+        - short_venue
+        - edge_bps
+        - depth_tier
+        - persistence_ms
+        - last_seen_ms
+        - fees_included
+
+    Mover:
+      type: object
+      description: Price mover over time window
+      properties:
+        instrument_id:
+          type: string
+          description: Canonical instrument identifier
+        window:
+          type: string
+          enum: [1h, 24h]
+          description: Time window for movement calculation
+        prob_now:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Current implied probability
+        prob_prev:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Previous probability at window start
+        delta_bps:
+          type: integer
+          description: Price change in basis points
+        imbalance_index:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Order flow imbalance index
+        ts_ms:
+          type: integer
+          minimum: 0
+          description: Timestamp (epoch ms)
+      required:
+        - instrument_id
+        - window
+        - prob_now
+        - prob_prev
+        - delta_bps
+        - imbalance_index
+        - ts_ms
+
+    WhaleLite:
+      type: object
+      description: Whale flow detection (lite version)
+      properties:
+        instrument_id:
+          type: string
+          description: Canonical instrument identifier
+        venue_id:
+          type: string
+          enum: [polymarket, kalshi]
+          description: Venue where flow was detected
+        impact:
+          type: string
+          enum: [LOW, MED, HIGH]
+          description: Market impact level
+        direction:
+          type: string
+          enum: [buy, sell]
+          description: Flow direction
+        post_move_bps:
+          type: integer
+          description: Price movement after flow (bps)
+        ts_ms:
+          type: integer
+          minimum: 0
+          description: Timestamp (epoch ms)
+      required:
+        - instrument_id
+        - venue_id
+        - impact
+        - direction
+        - post_move_bps
+        - ts_ms
+
+    Unusual:
+      type: object
+      description: Unusual activity detection
+      properties:
+        instrument_id:
+          type: string
+          description: Canonical instrument identifier
+        metric:
+          type: string
+          enum: [volume, volatility]
+          description: Type of unusual activity
+        window:
+          type: string
+          enum: [1h, 24h]
+          description: Analysis time window
+        zscore:
+          type: number
+          description: Z-score indicating unusualness level
+        ts_ms:
+          type: integer
+          minimum: 0
+          description: Timestamp (epoch ms)
+      required:
+        - instrument_id
+        - metric
+        - window
+        - zscore
+        - ts_ms
+
+    VenueHealth:
+      type: object
+      description: Venue connector health status
+      properties:
+        venue_id:
+          type: string
+          enum: [polymarket, kalshi]
+          description: Venue identifier
+        status:
+          type: string
+          enum: [CONNECTED, DEGRADED, STALE]
+          description: Current health status
+        last_event_ts_ms:
+          type: integer
+          minimum: 0
+          description: Last event timestamp (epoch ms)
+        messages_per_second:
+          type: number
+          minimum: 0
+          description: Current message throughput
+        staleness_seconds:
+          type: number
+          minimum: 0
+          description: Data staleness in seconds
+        observed_at_ms:
+          type: integer
+          minimum: 0
+          description: Health check timestamp (epoch ms)
+      required:
+        - venue_id
+        - status
+        - last_event_ts_ms
+        - observed_at_ms
+
+    # UI-specific schemas
+    MarketListResponse:
+      type: object
+      properties:
+        markets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Market'
+        total_count:
+          type: integer
+          description: Total number of available markets
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - markets
+        - total_count
+
+    Market:
+      type: object
+      description: Market summary for UI display
+      properties:
+        instrument_id:
+          type: string
+          description: Canonical instrument identifier
+        title:
+          type: string
+          description: Human-readable market title
+        venues:
+          type: array
+          items:
+            type: string
+            enum: [polymarket, kalshi]
+          description: Venues where market is available
+        implied_prob_now:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Current implied probability
+        prob_change_1h:
+          type: number
+          description: Probability change over 1h (can be negative)
+        prob_change_24h:
+          type: number
+          description: Probability change over 24h (can be negative)
+        volume_24h:
+          type: number
+          minimum: 0
+          description: 24h trading volume in USD
+        time_to_resolution:
+          type: string
+          format: date-time
+          description: Expected resolution timestamp
+        deep_link:
+          type: string
+          format: uri
+          description: Link to detailed market view
+        category:
+          type: string
+          enum: [politics, crypto, economics, sports, weather]
+          description: Market category
+      required:
+        - instrument_id
+        - title
+        - venues
+        - implied_prob_now
+        - deep_link
+
+    ResolutionEvent:
+      type: object
+      description: Market resolution event
+      properties:
+        instrument_id:
+          type: string
+          description: Canonical instrument identifier
+        title:
+          type: string
+          description: Event title
+        resolution_time:
+          type: string
+          format: date-time
+          description: Expected resolution time
+        venue_id:
+          type: string
+          enum: [polymarket, kalshi]
+          description: Primary venue for this market
+        event_type:
+          type: string
+          enum: [market_close, result_announcement, expiry]
+          description: Type of resolution event
+        description:
+          type: string
+          description: Event description
+      required:
+        - instrument_id
+        - title
+        - resolution_time
+        - venue_id
+        - event_type
+
+    PageInfo:
+      type: object
+      properties:
+        has_next_page:
+          type: boolean
+          description: Whether more results are available
+        cursor:
+          type: string
+          description: Cursor for pagination
+      required:
+        - has_next_page
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        code:
+          type: string
+          description: Error code
+        details:
+          type: object
+          description: Additional error details
+      required:
+        - error
+        - code
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Invalid parameter value"
+            code: "INVALID_PARAMETER"
+            details:
+              parameter: "min_edge_bps"
+              provided: -5
+              expected: "non-negative integer"
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Internal server error"
+            code: "INTERNAL_ERROR"
+
+  parameters:
+    LimitParam:
+      name: limit
+      in: query
+      description: Maximum number of results to return
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 200
+        default: 50
+
+    VenuesParam:
+      name: venues
+      in: query
+      description: Comma-separated list of venue identifiers
+      schema:
+        type: string
+        example: "polymarket,kalshi"
+
+tags:
+  - name: Markets
+    description: Market data and listings
+  - name: Insights
+    description: Trading insights and analytics
+  - name: Infrastructure
+    description: System health and monitoring
