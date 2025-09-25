@@ -1,0 +1,152 @@
+{
+  "name": "Sunday-schemas Backlog",
+  "lists": [
+    {
+      "id": "list_1",
+      "name": "Schemas: Event Definitions",
+      "closed": false
+    },
+    {
+      "id": "list_2",
+      "name": "Schemas: OpenAPI",
+      "closed": false
+    },
+    {
+      "id": "list_3",
+      "name": "Schemas: Codegen & Distribution",
+      "closed": false
+    },
+    {
+      "id": "list_4",
+      "name": "Schemas: Governance & CI",
+      "closed": false
+    },
+    {
+      "id": "list_5",
+      "name": "Schemas: Documentation & Registries",
+      "closed": false
+    }
+  ],
+  "cards": [
+    {
+      "id": "card_100",
+      "name": "Define raw.v0 envelope schema",
+      "desc": "As a connector engineer, I need a raw.v0 envelope schema so all connectors publish consistent payloads. AC: Schema defines venue_id, stream, instrument_native, ts_event_ms, ts_ingest_ms, payload; Examples validate.",
+      "idList": "list_1",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    },
+    {
+      "id": "card_101",
+      "name": "Define md.orderbook.delta schema",
+      "desc": "As a data engineer, I need md.orderbook.delta schema so normalized books are consistent. AC: Schema defines bids, asks, seq, ts_ms, is_snapshot; Monotonic seq rule documented; Examples validate.",
+      "idList": "list_1",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    },
+    {
+      "id": "card_102",
+      "name": "Define md.trade schema",
+      "desc": "As a data engineer, I need md.trade schema so trades are represented consistently. AC: Schema defines side, prob, size, ts_ms; Examples validate.",
+      "idList": "list_1",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    },
+    {
+      "id": "card_103",
+      "name": "Define insights schemas (arb, movers, whales, unusual)",
+      "desc": "As a PM, I need insights schemas so UI can display lightweight analytics. AC: Schemas for arb, movers, whales, unusual defined with enums + required fields; Examples validate.",
+      "idList": "list_1",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    },
+    {
+      "id": "card_104",
+      "name": "Define infra.venue_health schema",
+      "desc": "As an operator, I need infra.venue_health schema to monitor connector health. AC: Schema defines status, last_event_ts_ms, staleness; Examples validate.",
+      "idList": "list_1",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    },
+    {
+      "id": "card_105",
+      "name": "Publish ui.v1.yaml OpenAPI spec",
+      "desc": "As a UI engineer, I need a published OpenAPI spec so I can generate client types. AC: Endpoints for /markets, /arb, /movers, /flows, /unusual, /calendar, /venue-health defined; Components reuse schemas.",
+      "idList": "list_2",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    },
+    {
+      "id": "card_106",
+      "name": "Generate TypeScript types",
+      "desc": "As a UI engineer, I want generated TS types so I can import schemas directly. AC: json-schema-to-typescript generates d.ts files; Published as @sunday/schemas.",
+      "idList": "list_3",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    },
+    {
+      "id": "card_107",
+      "name": "Generate Go types",
+      "desc": "As a data engineer, I want Go types generated so I can consume schemas in services. AC: oapi-codegen and quicktype generate Go structs; Published as github.com/sunday-xyz/schemas/go.",
+      "idList": "list_3",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    },
+    {
+      "id": "card_108",
+      "name": "Automate publishing on tag",
+      "desc": "As a developer, I want npm + Go modules published on tag so releases are automatic. AC: GitHub Actions workflow publishes artifacts; SBOM/checksums included.",
+      "idList": "list_3",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    },
+    {
+      "id": "card_109",
+      "name": "Setup validation and linting",
+      "desc": "As a schema maintainer, I need validation so schemas and examples remain consistent. AC: ajv validates JSON schemas; spectral lints OpenAPI; yamllint/jsonlint run in CI.",
+      "idList": "list_4",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    },
+    {
+      "id": "card_110",
+      "name": "Setup compatibility gates",
+      "desc": "As a schema maintainer, I need CI gates so breaking changes are blocked. AC: json-schema-diff + oas-diff run in CI; topics.json and venues.json guarded; PRs require CHANGELOG entries.",
+      "idList": "list_4",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    },
+    {
+      "id": "card_111",
+      "name": "Define governance process",
+      "desc": "As a schema working group, we need a clear process for changes. AC: WG review required for schema PRs; Deprecations marked with x-deprecated/$comment; Minor version overlap maintained.",
+      "idList": "list_4",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    },
+    {
+      "id": "card_112",
+      "name": "Maintain examples",
+      "desc": "As a QA, I need golden examples so schemas can be validated with real data. AC: Examples provided for each schema; CI validates all examples.",
+      "idList": "list_5",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    },
+    {
+      "id": "card_113",
+      "name": "Maintain topics.json and registries",
+      "desc": "As a maintainer, I need topics.json and venues.json so downstreams use a canonical list. AC: topics.json maps schemas \u2192 topics; venues.json lists venues; instruments.json seeded.",
+      "idList": "list_5",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    },
+    {
+      "id": "card_114",
+      "name": "Maintain mapping docs",
+      "desc": "As a developer, I need mapping.md so raw\u2192normalized rules are documented. AC: Rules for symbol \u2192 instrument_id, YES/NO conventions documented.",
+      "idList": "list_5",
+      "closed": false,
+      "dateLastActivity": "2025-09-25"
+    }
+  ]
+}
