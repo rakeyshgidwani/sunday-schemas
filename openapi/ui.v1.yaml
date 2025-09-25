@@ -22,6 +22,8 @@ paths:
       summary: List markets
       description: Returns a list of available prediction markets with current pricing and metadata
       operationId: getMarkets
+      tags:
+        - Markets
       parameters:
         - name: limit
           in: query
@@ -79,6 +81,8 @@ paths:
       summary: List arbitrage opportunities
       description: Returns current arbitrage opportunities between venues
       operationId: getArbitrageOpportunities
+      tags:
+        - Insights
       parameters:
         - name: min_edge_bps
           in: query
@@ -146,6 +150,8 @@ paths:
       summary: List price movers
       description: Returns instruments with significant price movements
       operationId: getMovers
+      tags:
+        - Insights
       parameters:
         - name: window
           in: query
@@ -187,6 +193,8 @@ paths:
       summary: List whale flows
       description: Returns detected large trade flows (whale activity)
       operationId: getWhaleFlows
+      tags:
+        - Insights
       parameters:
         - name: impact
           in: query
@@ -227,6 +235,8 @@ paths:
       summary: List unusual activity
       description: Returns detected unusual volume or volatility activity
       operationId: getUnusualActivity
+      tags:
+        - Insights
       parameters:
         - name: metric
           in: query
@@ -273,6 +283,8 @@ paths:
       summary: List resolution events
       description: Returns upcoming market resolution events and deadlines
       operationId: getCalendar
+      tags:
+        - Markets
       parameters:
         - name: days_ahead
           in: query
@@ -315,6 +327,8 @@ paths:
       summary: Get venue health status
       description: Returns current health status of all venue connectors
       operationId: getVenueHealth
+      tags:
+        - Infrastructure
       responses:
         '200':
           description: List of venue health statuses
@@ -664,24 +678,6 @@ components:
             error: "Internal server error"
             code: "INTERNAL_ERROR"
 
-  parameters:
-    LimitParam:
-      name: limit
-      in: query
-      description: Maximum number of results to return
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 200
-        default: 50
-
-    VenuesParam:
-      name: venues
-      in: query
-      description: Comma-separated list of venue identifiers
-      schema:
-        type: string
-        example: "polymarket,kalshi"
 
 tags:
   - name: Markets

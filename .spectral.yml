@@ -1,0 +1,6 @@
+extends: spectral:oas
+
+rules:
+  # Disable rules we don't need
+  oas3-operation-security-defined: off
+  oas3-unused-component: warn

@@ -8,9 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Repository structure and foundation setup
-- Basic documentation (README, CLAUDE.md, IMPLEMENTATION_PLAN.md)
-- Initial tooling configuration
+- Phase 4: Comprehensive validation and CI tooling
+- Schema structural validation with custom JSON Schema checker
+- OpenAPI linting with Spectral configuration
+- Backward compatibility checking for schemas, topics, and venues
+- GitHub Actions CI/CD workflow with compatibility gates
+- CHANGELOG enforcement for schema changes
+
+### Enhanced
+- Improved validation scripts with better error handling
+- OpenAPI specification with proper tags and examples
 
 ## [0.1.0] - 2025-09-25
 

@@ -7,9 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "validate-schemas": "npx ajv compile -s 'schemas/json/*.json'",
+    "validate-schemas": "node scripts/validate-schemas.js",
     "validate-examples": "node scripts/validate-examples.js",
-    "lint-openapi": "echo 'OpenAPI structure validated manually - spectral configuration pending'",
+    "lint-openapi": "spectral lint openapi/ui.v1.yaml",
     "lint-json": "jsonlint schemas/**/*.json",
     "validate": "npm run validate-schemas && npm run validate-examples",
     "lint": "npm run lint-openapi && npm run lint-json",
@@ -17,7 +17,9 @@
     "generate-ts": "json-schema-to-typescript -i schemas/json -o codegen/ts",
     "generate-openapi-ts": "openapi-typescript openapi/ui.v1.yaml -o codegen/ts/api.ts",
     "generate": "npm run generate-ts && npm run generate-openapi-ts",
-    "check-compatibility": "echo 'Compatibility checks will be implemented in Phase 4'",
+    "check-compatibility": "node scripts/check-compatibility.js",
+    "check-changelog": "node scripts/check-changelog.js",
+    "ci-validate": "npm run validate && npm run lint && npm run check-compatibility",
     "build": "npm run validate && npm run generate",
     "dev": "npm run validate"
   },
@@ -37,6 +39,7 @@
     "@stoplight/spectral-cli": "^6.15.0",
     "@stoplight/spectral-rulesets": "^1.22.0",
     "ajv": "^8.17.1",
+    "ajv-draft-04": "^1.0.0",
     "ajv-formats": "^3.0.1",
     "js-yaml": "^4.1.0",
     "json-schema-diff": "^0.18.1",

@@ -1,0 +1,101 @@
+name: Validate Schemas
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validate Schemas and API
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history for compatibility checks
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Validate JSON Schema structure
+        run: npm run validate-schemas
+
+      - name: Validate examples against schemas
+        run: npm run validate-examples
+
+      - name: Lint JSON files
+        run: npm run lint-json
+
+      - name: Lint OpenAPI specification
+        run: npm run lint-openapi
+
+      - name: Check venue registry consistency
+        run: node scripts/check-venues.js
+
+  compatibility:
+    name: Check Backward Compatibility
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check schema backward compatibility
+        run: node scripts/check-compatibility.js --base-ref=origin/main
+
+      - name: Check CHANGELOG.md updated
+        run: node scripts/check-changelog.js
+
+  # OpenAPI compatibility check (future enhancement)
+  # openapi-compatibility:
+  #   name: Check OpenAPI Compatibility
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'pull_request'
+  #
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '18'
+  #         cache: 'npm'
+  #
+  #     - name: Install dependencies
+  #       run: npm install
+  #
+  #     - name: Check OpenAPI backward compatibility
+  #       run: |
+  #         # Get the OpenAPI spec from main branch
+  #         git show origin/main:openapi/ui.v1.yaml > /tmp/previous-openapi.yaml || echo "No previous OpenAPI spec"
+  #
+  #         # Run openapi-diff if previous spec exists
+  #         if [ -f /tmp/previous-openapi.yaml ]; then
+  #           npx openapi-diff /tmp/previous-openapi.yaml openapi/ui.v1.yaml --fail-on-incompatible
+  #         else
+  #           echo "No previous OpenAPI spec found, skipping compatibility check"
+  #         fi
