@@ -41,6 +41,35 @@ jobs:
       - name: Check venue registry consistency
         run: node scripts/check-venues.js
 
+  governance:
+    name: Governance Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check deprecation metadata
+        run: npm run check-deprecations
+
+      - name: Check version overlap requirements
+        run: npm run check-version-overlap
+
+      - name: Generate deprecation report
+        run: npm run deprecation-report
+
+      - name: Analyze example coverage
+        run: npm run analyze-coverage
+
   compatibility:
     name: Check Backward Compatibility
     runs-on: ubuntu-latest
