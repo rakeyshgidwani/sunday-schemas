@@ -20,7 +20,7 @@ const (
 	SchemaINSIGHTS_WHALES_LITE_V1 EventSchema = "insights.whales.lite.v1"
 	SchemaMD_ORDERBOOK_DELTA_V1 EventSchema = "md.orderbook.delta.v1"
 	SchemaMD_TRADE_V1 EventSchema = "md.trade.v1"
-	SchemaRAW_V0_ENVELOPE EventSchema = "raw.v0.envelope"
+	SchemaRAW_V0 EventSchema = "raw.v0"
 )
 
 // VenueID represents supported venues
@@ -43,15 +43,15 @@ const (
 type HealthStatus string
 
 const (
-	HealthConnected HealthStatus = "connected"
-	HealthDegraded  HealthStatus = "degraded"
-	HealthStale     HealthStatus = "stale"
+	HealthConnected HealthStatus = "CONNECTED"
+	HealthDegraded  HealthStatus = "DEGRADED"
+	HealthStale     HealthStatus = "STALE"
 )
 
 // ValidateSchema checks if a schema string is valid
 func ValidateSchema(schema string) error {
 	switch EventSchema(schema) {
-	case SchemaINFRA_VENUE_HEALTH_V1, SchemaINSIGHTS_ARB_LITE_V1, SchemaINSIGHTS_MOVERS_V1, SchemaINSIGHTS_UNUSUAL_V1, SchemaINSIGHTS_WHALES_LITE_V1, SchemaMD_ORDERBOOK_DELTA_V1, SchemaMD_TRADE_V1, SchemaRAW_V0_ENVELOPE:
+	case SchemaINFRA_VENUE_HEALTH_V1, SchemaINSIGHTS_ARB_LITE_V1, SchemaINSIGHTS_MOVERS_V1, SchemaINSIGHTS_UNUSUAL_V1, SchemaINSIGHTS_WHALES_LITE_V1, SchemaMD_ORDERBOOK_DELTA_V1, SchemaMD_TRADE_V1, SchemaRAW_V0:
 		return nil
 	default:
 		return fmt.Errorf("invalid schema: %s", schema)
@@ -78,7 +78,7 @@ func AllSchemas() []EventSchema {
 		SchemaINSIGHTS_WHALES_LITE_V1,
 		SchemaMD_ORDERBOOK_DELTA_V1,
 		SchemaMD_TRADE_V1,
-		SchemaRAW_V0_ENVELOPE,
+		SchemaRAW_V0,
 	}
 }
 

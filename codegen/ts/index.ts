@@ -9,23 +9,23 @@
  */
 
 // Event Schema Types
-export type { RawV0Envelope as RawEnvelope } from './raw.v0.envelope.schema';
-export type { NormalizedOrderbookDeltaV1 as OrderbookDelta } from './md.orderbook.delta.v1.schema';
+export type { RawEnvelopeV0 as RawEnvelope } from './raw.v0.envelope.schema';
+export type { NormalizedOrderBookDeltaV1 as OrderbookDelta } from './md.orderbook.delta.v1.schema';
 export type { NormalizedTradeV1 as Trade } from './md.trade.v1.schema';
 export type { ArbitrageLiteV1 as ArbitrageLite } from './insights.arb.lite.v1.schema';
 export type { MoversV1 as Movers } from './insights.movers.v1.schema';
-export type { WhalesLiteV1 as WhalesLite } from './insights.whales.lite.v1.schema';
-export type { UnusualV1 as Unusual } from './insights.unusual.v1.schema';
+export type { WhaleFlowsLiteV1 as WhalesLite } from './insights.whales.lite.v1.schema';
+export type { UnusualActivityV1 as Unusual } from './insights.unusual.v1.schema';
 export type { VenueHealthV1 as VenueHealth } from './infra.venue_health.v1.schema';
 
 // Re-export all types with their original names for backward compatibility
-export type { RawV0Envelope } from './raw.v0.envelope.schema';
-export type { NormalizedOrderbookDeltaV1 } from './md.orderbook.delta.v1.schema';
+export type { RawEnvelopeV0 } from './raw.v0.envelope.schema';
+export type { NormalizedOrderBookDeltaV1 } from './md.orderbook.delta.v1.schema';
 export type { NormalizedTradeV1 } from './md.trade.v1.schema';
 export type { ArbitrageLiteV1 } from './insights.arb.lite.v1.schema';
 export type { MoversV1 } from './insights.movers.v1.schema';
-export type { WhalesLiteV1 } from './insights.whales.lite.v1.schema';
-export type { UnusualV1 } from './insights.unusual.v1.schema';
+export type { WhaleFlowsLiteV1 } from './insights.whales.lite.v1.schema';
+export type { UnusualActivityV1 } from './insights.unusual.v1.schema';
 export type { VenueHealthV1 } from './infra.venue_health.v1.schema';
 
 // API Types (OpenAPI generated)
@@ -46,28 +46,28 @@ export type VenueId = 'polymarket' | 'kalshi';
 
 export type TradeSide = 'buy' | 'sell';
 
-export type HealthStatus = 'connected' | 'degraded' | 'stale';
+export type HealthStatus = 'CONNECTED' | 'DEGRADED' | 'STALE';
 
 // Event type union for type-safe event handling
 export type SundayEvent =
-  | RawV0Envelope
-  | NormalizedOrderbookDeltaV1
+  | RawEnvelopeV0
+  | NormalizedOrderBookDeltaV1
   | NormalizedTradeV1
   | ArbitrageLiteV1
   | MoversV1
-  | WhalesLiteV1
-  | UnusualV1
+  | WhaleFlowsLiteV1
+  | UnusualActivityV1
   | VenueHealthV1;
 
 // Utility type for extracting events by schema
 export type EventBySchema<T extends EventSchema> =
-  T extends 'raw.v0' ? RawV0Envelope :
-  T extends 'md.orderbook.delta.v1' ? NormalizedOrderbookDeltaV1 :
+  T extends 'raw.v0' ? RawEnvelopeV0 :
+  T extends 'md.orderbook.delta.v1' ? NormalizedOrderBookDeltaV1 :
   T extends 'md.trade.v1' ? NormalizedTradeV1 :
   T extends 'insights.arb.lite.v1' ? ArbitrageLiteV1 :
   T extends 'insights.movers.v1' ? MoversV1 :
-  T extends 'insights.whales.lite.v1' ? WhalesLiteV1 :
-  T extends 'insights.unusual.v1' ? UnusualV1 :
+  T extends 'insights.whales.lite.v1' ? WhaleFlowsLiteV1 :
+  T extends 'insights.unusual.v1' ? UnusualActivityV1 :
   T extends 'infra.venue_health.v1' ? VenueHealthV1 :
   never;
 

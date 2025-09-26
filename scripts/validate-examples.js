@@ -85,26 +85,26 @@ function validateExamples(schemas) {
         continue;
       }
 
-      // Basic validation - check that required fields exist
-      if (schema.required) {
-        let hasAllRequired = true;
-        const missing = [];
+      // Full Ajv validation
+      try {
+        const validate = ajv.getSchema(schemaId) || ajv.compile(schema);
+        const valid = validate(example);
 
-        for (const requiredField of schema.required) {
-          if (!(requiredField in example)) {
-            hasAllRequired = false;
-            missing.push(requiredField);
-          }
-        }
-
-        if (hasAllRequired) {
-          console.log(`✅ ${file} has all required fields for ${schemaId}`);
+        if (valid) {
+          console.log(`✅ ${file} validates successfully against ${schemaId}`);
         } else {
-          console.error(`❌ ${file} missing required fields: ${missing.join(', ')}`);
+          console.error(`❌ ${file} validation failed for ${schemaId}:`);
+          for (const error of validate.errors || []) {
+            console.error(`  - ${error.instancePath || 'root'}: ${error.message}`);
+            if (error.data !== undefined) {
+              console.error(`    Value: ${JSON.stringify(error.data)}`);
+            }
+          }
           allValid = false;
         }
-      } else {
-        console.log(`✅ ${file} JSON structure valid for ${schemaId}`);
+      } catch (validationError) {
+        console.error(`❌ ${file} validation error for ${schemaId}: ${validationError.message}`);
+        allValid = false;
       }
     } catch (error) {
       console.error(`Failed to process example ${file}:`, error.message);

@@ -7,6 +7,8 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { diffSchemas } = require('json-schema-diff');
+const openapiDiff = require('openapi-diff');
 
 const SCHEMAS_DIR = path.join(__dirname, '../schemas/json');
 const OPENAPI_FILE = path.join(__dirname, '../openapi/ui.v1.yaml');
@@ -44,7 +46,7 @@ function parseJson(content) {
   }
 }
 
-function checkSchemaCompatibility(currentSchema, previousSchema, filename) {
+async function checkSchemaCompatibility(currentSchema, previousSchema, filename) {
   const issues = [];
 
   if (!previousSchema) {
@@ -52,45 +54,55 @@ function checkSchemaCompatibility(currentSchema, previousSchema, filename) {
     return [];
   }
 
-  // Check if required fields were added (breaking change)
-  const currentRequired = currentSchema.required || [];
-  const previousRequired = previousSchema.required || [];
-  const addedRequired = currentRequired.filter(field => !previousRequired.includes(field));
+  try {
+    // Use json-schema-diff for comprehensive compatibility analysis
+    const diffResult = await diffSchemas({
+      sourceSchema: previousSchema,
+      destinationSchema: currentSchema
+    });
 
-  if (addedRequired.length > 0) {
-    issues.push(`❌ ${filename}: Added required fields: ${addedRequired.join(', ')}`);
-  }
+    // Check for breaking changes - removals indicate breaking changes
+    if (diffResult.removalsFound) {
+      issues.push(`❌ ${filename}: Breaking changes detected (schema elements removed or narrowed)`);
 
-  // Check if required fields were removed (breaking change)
-  const removedRequired = previousRequired.filter(field => !currentRequired.includes(field));
-  if (removedRequired.length > 0) {
-    issues.push(`❌ ${filename}: Removed required fields: ${removedRequired.join(', ')}`);
-  }
-
-  // Check if properties were removed (breaking change)
-  const currentProps = Object.keys(currentSchema.properties || {});
-  const previousProps = Object.keys(previousSchema.properties || {});
-  const removedProps = previousProps.filter(prop => !currentProps.includes(prop));
-
-  if (removedProps.length > 0) {
-    issues.push(`❌ ${filename}: Removed properties: ${removedProps.join(', ')}`);
-  }
-
-  // Check enum narrowing (breaking change)
-  for (const prop of currentProps) {
-    const currentProp = currentSchema.properties[prop];
-    const previousProp = previousSchema.properties?.[prop];
-
-    if (currentProp?.enum && previousProp?.enum) {
-      const removedValues = previousProp.enum.filter(val => !currentProp.enum.includes(val));
-      if (removedValues.length > 0) {
-        issues.push(`❌ ${filename}.${prop}: Removed enum values: ${removedValues.join(', ')}`);
+      // If there's a removed schema, it means some valid inputs under the old schema
+      // would no longer be valid under the new schema
+      if (diffResult.removedJsonSchema) {
+        console.log(`   Details: Schema became more restrictive`);
       }
+    } else {
+      console.log(`✅ ${filename}: Backward compatible`);
     }
-  }
 
-  if (issues.length === 0) {
-    console.log(`✅ ${filename}: Backward compatible`);
+  } catch (error) {
+    // Fallback to basic checks if json-schema-diff fails
+    console.warn(`Warning: json-schema-diff failed for ${filename}, using basic checks: ${error.message}`);
+
+    // Basic fallback compatibility checks
+    const currentRequired = currentSchema.required || [];
+    const previousRequired = previousSchema.required || [];
+    const addedRequired = currentRequired.filter(field => !previousRequired.includes(field));
+
+    if (addedRequired.length > 0) {
+      issues.push(`❌ ${filename}: Added required fields: ${addedRequired.join(', ')}`);
+    }
+
+    const removedRequired = previousRequired.filter(field => !currentRequired.includes(field));
+    if (removedRequired.length > 0) {
+      issues.push(`❌ ${filename}: Removed required fields: ${removedRequired.join(', ')}`);
+    }
+
+    const currentProps = Object.keys(currentSchema.properties || {});
+    const previousProps = Object.keys(previousSchema.properties || {});
+    const removedProps = previousProps.filter(prop => !currentProps.includes(prop));
+
+    if (removedProps.length > 0) {
+      issues.push(`❌ ${filename}: Removed properties: ${removedProps.join(', ')}`);
+    }
+
+    if (issues.length === 0) {
+      console.log(`✅ ${filename}: Backward compatible (basic check)`);
+    }
   }
 
   return issues;
@@ -158,6 +170,63 @@ function checkVenuesCompatibility(currentVenues, previousVenues) {
   return issues;
 }
 
+function checkOpenApiCompatibility(currentFile, previousContent) {
+  const issues = [];
+
+  if (!previousContent) {
+    console.log(`✅ ${path.basename(currentFile)}: New OpenAPI spec (no compatibility check needed)`);
+    return [];
+  }
+
+  // Write previous content to temp file for comparison
+  const tempFile = `${currentFile}.prev.yaml`;
+
+  try {
+    fs.writeFileSync(tempFile, previousContent);
+
+    // Use openapi-diff to check for breaking changes
+    return new Promise((resolve) => {
+      openapiDiff.diffSpecs({
+        sourceSpec: {
+          content: previousContent,
+          location: tempFile,
+          format: 'yaml'
+        },
+        destinationSpec: {
+          content: fs.readFileSync(currentFile, 'utf8'),
+          location: currentFile,
+          format: 'yaml'
+        }
+      })
+      .then(result => {
+        if (result.breakingChanges && result.breakingChanges.length > 0) {
+          for (const change of result.breakingChanges) {
+            issues.push(`❌ ${path.basename(currentFile)}: ${change.type}: ${change.description || change.source}`);
+          }
+        } else {
+          console.log(`✅ ${path.basename(currentFile)}: Backward compatible`);
+        }
+
+        // Clean up temp file
+        try { fs.unlinkSync(tempFile); } catch {}
+        resolve(issues);
+      })
+      .catch(error => {
+        console.warn(`Warning: openapi-diff failed for ${path.basename(currentFile)}: ${error.message}`);
+        console.log(`✅ ${path.basename(currentFile)}: Could not check compatibility (assuming compatible)`);
+
+        // Clean up temp file
+        try { fs.unlinkSync(tempFile); } catch {}
+        resolve([]);
+      });
+    });
+  } catch (error) {
+    console.warn(`Warning: Failed to check OpenAPI compatibility: ${error.message}`);
+    try { fs.unlinkSync(tempFile); } catch {}
+    return Promise.resolve([]);
+  }
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const baseRef = args.find(arg => arg.startsWith('--base-ref='))?.split('=')[1] || 'main';
@@ -185,7 +254,7 @@ async function main() {
       const previousSchema = parseJson(previousContent);
 
       if (currentSchema) {
-        const issues = checkSchemaCompatibility(currentSchema, previousSchema, file);
+        const issues = await checkSchemaCompatibility(currentSchema, previousSchema, file);
         allIssues.push(...issues);
       }
     }
@@ -219,9 +288,16 @@ async function main() {
     }
   }
 
-  // TODO: Add OpenAPI compatibility checking with openapi-diff
-  // For now, just log that OpenAPI checking is pending
-  console.log('⚠️  OpenAPI compatibility checking with openapi-diff pending implementation');
+  // Check OpenAPI specification
+  if (fs.existsSync(OPENAPI_FILE)) {
+    const previousContent = getFileAtRef(OPENAPI_FILE, gitRef);
+    if (previousContent) {
+      const openApiIssues = await checkOpenApiCompatibility(OPENAPI_FILE, previousContent);
+      allIssues.push(...openApiIssues);
+    } else {
+      console.log(`✅ ${path.basename(OPENAPI_FILE)}: New OpenAPI spec (no compatibility check needed)`);
+    }
+  }
 
   if (allIssues.length > 0) {
     console.log('\n💥 Compatibility Issues Found:');

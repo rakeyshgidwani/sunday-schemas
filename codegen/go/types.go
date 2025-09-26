@@ -8,14 +8,17 @@ package sundayschemas
 // Schema type definitions for Sunday event platform
 // These types correspond to the JSON schemas defined in the schemas/json directory
 
-// RawEnvelope represents the raw.v0.envelope schema
+// RawEnvelope represents the raw.v0 schema
 type RawEnvelope struct {
 	Schema           string      `json:"schema"`
 	VenueID          string      `json:"venue_id"`
+	Stream           string      `json:"stream"`
 	InstrumentNative string      `json:"instrument_native"`
+	PartitionKey     string      `json:"partition_key"`
 	TsEventMs        int64       `json:"ts_event_ms"`
-	TsReceivedMs     int64       `json:"ts_received_ms"`
-	SeqNum           int64       `json:"seq_num,omitempty"`
+	TsIngestMs       int64       `json:"ts_ingest_ms"`
+	IsHistorical     *bool       `json:"is_historical,omitempty"`
+	BackfillTsMs     *int64      `json:"backfill_ts_ms,omitempty"`
 	Payload          interface{} `json:"payload"`
 }
 
