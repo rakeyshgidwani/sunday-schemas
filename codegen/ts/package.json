@@ -1,0 +1,48 @@
+{
+  "name": "@sunday/schemas",
+  "version": "1.0.0",
+  "description": "Generated TypeScript types and API contracts for Sunday platform event schemas",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "module": "index.js",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./index.js"
+    },
+    "./schemas/*": "./schemas/*"
+  },
+  "files": [
+    "*.d.ts",
+    "*.js",
+    "schemas/",
+    "README.md"
+  ],
+  "keywords": [
+    "sunday",
+    "schemas",
+    "typescript",
+    "events",
+    "api",
+    "types",
+    "prediction-markets"
+  ],
+  "author": "Sunday Platform",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rakeyshgidwani/sunday-schemas.git",
+    "directory": "codegen/ts"
+  },
+  "bugs": {
+    "url": "https://github.com/rakeyshgidwani/sunday-schemas/issues"
+  },
+  "homepage": "https://github.com/rakeyshgidwani/sunday-schemas#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
