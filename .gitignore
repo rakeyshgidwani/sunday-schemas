@@ -21,6 +21,8 @@ codegen/go/generated/
 
 # OS files
 .DS_Store
+.DS_Store?
+._*
 Thumbs.db
 
 # Logs
