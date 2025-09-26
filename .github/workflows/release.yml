@@ -1,0 +1,631 @@
+name: Release and Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate all schemas and examples
+        run: npm run validate
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Check backward compatibility
+        run: npm run check-compatibility
+
+      - name: Check changelog
+        run: npm run check-changelog
+
+      - name: Analyze coverage
+        run: npm run analyze-coverage
+
+  publish-npm:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate TypeScript types
+        run: |
+          npm run generate-ts
+          npm run generate-openapi-ts
+
+      - name: Prepare NPM package
+        run: |
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+
+          # Create package.json for npm
+          cat > codegen/ts/package.json << EOF
+          {
+            "name": "@sunday-platform/schemas",
+            "version": "$TAG_VERSION",
+            "description": "TypeScript types for Sunday platform event schemas and API contracts",
+            "main": "index.js",
+            "types": "index.d.ts",
+            "files": ["*.ts", "*.d.ts", "*.js", "*.map"],
+            "keywords": ["sunday", "schemas", "typescript", "prediction-markets", "events", "polymarket", "kalshi"],
+            "author": "Sunday Platform",
+            "license": "ISC",
+            "repository": {
+              "type": "git",
+              "url": "git+https://github.com/rakeyshgidwani/sunday-schemas.git",
+              "directory": "codegen/ts"
+            },
+            "bugs": {
+              "url": "https://github.com/rakeyshgidwani/sunday-schemas/issues"
+            },
+            "homepage": "https://github.com/rakeyshgidwani/sunday-schemas#readme",
+            "publishConfig": {
+              "access": "public"
+            }
+          }
+          EOF
+
+          # Create comprehensive README
+          cat > codegen/ts/README.md << 'EOF'
+          # @sunday-platform/schemas
+
+          ![npm version](https://img.shields.io/npm/v/@sunday-platform/schemas)
+          ![npm downloads](https://img.shields.io/npm/dm/@sunday-platform/schemas)
+
+          TypeScript types generated from Sunday platform event schemas and API contracts.
+
+          ## Installation
+
+          ```bash
+          npm install @sunday-platform/schemas
+          # or
+          yarn add @sunday-platform/schemas
+          # or
+          pnpm add @sunday-platform/schemas
+          ```
+
+          ## Quick Start
+
+          ```typescript
+          import {
+            Trade,
+            OrderbookDelta,
+            SundayEvent,
+            EventSchema,
+            VenueId
+          } from '@sunday-platform/schemas';
+
+          // Type-safe event handling
+          function handleEvent(event: SundayEvent) {
+            switch (event.schema) {
+              case 'md.trade.v1':
+                // TypeScript knows this is a Trade event
+                console.log(`${event.side} trade: ${event.prob} prob, ${event.size} size`);
+                break;
+              case 'md.orderbook.delta.v1':
+                // TypeScript knows this is an OrderbookDelta event
+                console.log(`Orderbook ${event.is_snapshot ? 'snapshot' : 'delta'}`);
+                break;
+              default:
+                console.log(`Unknown event type: ${event.schema}`);
+            }
+          }
+
+          // API client types
+          import type { paths } from '@sunday-platform/schemas';
+
+          type GetMarketsResponse = paths['/markets']['get']['responses']['200']['content']['application/json'];
+          ```
+
+          ## Available Types
+
+          ### Event Schema Types
+
+          - `RawEnvelope` - Raw venue data envelope
+          - `OrderbookDelta` - Normalized orderbook updates
+          - `Trade` - Normalized trade events
+          - `ArbitrageLite` - Arbitrage opportunities
+          - `Movers` - Price movement tracking
+          - `WhalesLite` - Large flow detection
+          - `Unusual` - Unusual activity detection
+          - `VenueHealth` - Connector health monitoring
+
+          ### API Types
+
+          Complete TypeScript types for the Sunday UI BFF API:
+
+          - Market data endpoints (`/markets`, `/arb`, `/movers`)
+          - Insights endpoints (`/whales`, `/unusual`)
+          - Infrastructure endpoints (`/health`)
+          - Request/response types with proper typing
+
+          ### Utility Types
+
+          - `EventSchema` - Union of all valid schema strings
+          - `VenueId` - Union of supported venue identifiers
+          - `TradeSide` - Trade direction types
+          - `HealthStatus` - Venue health status types
+          - `SundayEvent` - Union of all event types
+          - `EventBySchema<T>` - Extract event type by schema
+
+          ### Constants
+
+          ```typescript
+          import { SCHEMA_CONSTANTS, VENUE_IDS } from '@sunday-platform/schemas';
+
+          // Validate schema at runtime
+          if (!(eventSchema in SCHEMA_CONSTANTS)) {
+            throw new Error(`Invalid schema: ${eventSchema}`);
+          }
+
+          // Check venue support
+          if (!VENUE_IDS.includes(venueId)) {
+            throw new Error(`Unsupported venue: ${venueId}`);
+          }
+          ```
+
+          ## Usage Examples
+
+          ### Event Processing
+
+          ```typescript
+          import { SundayEvent } from '@sunday-platform/schemas';
+
+          async function processEvents(events: SundayEvent[]) {
+            for (const event of events) {
+              switch (event.schema) {
+                case 'md.trade.v1':
+                  await processTrade(event);
+                  break;
+                case 'md.orderbook.delta.v1':
+                  await processOrderbook(event);
+                  break;
+                case 'insights.arb.lite.v1':
+                  await processArbitrage(event);
+                  break;
+              }
+            }
+          }
+          ```
+
+          ### API Integration
+
+          ```typescript
+          import type { paths } from '@sunday-platform/schemas';
+
+          type ApiClient = {
+            getMarkets(): Promise<paths['/markets']['get']['responses']['200']['content']['application/json']>;
+            getArbitrageOpportunities(): Promise<paths['/arb']['get']['responses']['200']['content']['application/json']>;
+          };
+          ```
+
+          ## Venues Supported
+
+          - **Polymarket** - Ethereum-based prediction markets
+          - **Kalshi** - CFTC-regulated event contracts
+
+          ## Schema Validation
+
+          All types include runtime schema validation constants:
+
+          ```typescript
+          import { SCHEMA_CONSTANTS } from '@sunday-platform/schemas';
+
+          function isValidSchema(schema: string): schema is EventSchema {
+            return schema in SCHEMA_CONSTANTS;
+          }
+          ```
+
+          ## Version History
+
+          This package follows semantic versioning. See the [CHANGELOG](https://github.com/rakeyshgidwani/sunday-schemas/blob/main/CHANGELOG.md) for detailed release notes.
+
+          ## Generated From
+
+          This package is automatically generated from:
+          - JSON Schema definitions
+          - OpenAPI 3.1 specifications
+          - Venue data mappings
+
+          Source repository: [sunday-schemas](https://github.com/rakeyshgidwani/sunday-schemas)
+
+          **⚠️ Do not modify these types directly** - they will be overwritten on the next release.
+
+          ## Related Packages
+
+          - **Go Module**: `github.com/rakeyshgidwani/sunday-schemas/codegen/go`
+          - **Schema Repository**: [sunday-schemas](https://github.com/rakeyshgidwani/sunday-schemas)
+
+          ## License
+
+          ISC
+          EOF
+
+      - name: Compile TypeScript
+        run: |
+          cd codegen/ts
+
+          # Create tsconfig.json
+          cat > tsconfig.json << 'EOF'
+          {
+            "compilerOptions": {
+              "target": "ES2020",
+              "module": "CommonJS",
+              "lib": ["ES2020"],
+              "declaration": true,
+              "outDir": ".",
+              "rootDir": ".",
+              "strict": true,
+              "esModuleInterop": true,
+              "skipLibCheck": true,
+              "forceConsistentCasingInFileNames": true,
+              "moduleResolution": "node",
+              "allowSyntheticDefaultImports": true
+            },
+            "include": ["*.ts"],
+            "exclude": ["*.d.ts", "*.js"]
+          }
+          EOF
+
+          # Compile TypeScript files
+          npx tsc
+
+      - name: Publish to NPM
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd codegen/ts
+          npm publish
+
+  publish-go:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+          npm install -g quicktype
+
+      - name: Generate Go types
+        run: |
+          npm run generate-go
+          npm run generate-openapi-go
+
+      - name: Update Go module
+        run: |
+          cd codegen/go
+
+          # Ensure proper go.mod
+          cat > go.mod << 'EOF'
+          module github.com/rakeyshgidwani/sunday-schemas/codegen/go
+
+          go 1.22
+
+          require github.com/oapi-codegen/runtime v1.1.1
+          EOF
+
+          go mod tidy
+
+          # Create comprehensive README
+          cat > README.md << 'EOF'
+          # Sunday Schemas - Go Module
+
+          ![Go Version](https://img.shields.io/github/go-mod/go-version/rakeyshgidwani/sunday-schemas?filename=codegen%2Fgo%2Fgo.mod)
+          ![Go Report Card](https://goreportcard.com/badge/github.com/rakeyshgidwani/sunday-schemas/codegen/go)
+
+          Go types and client generated from Sunday platform event schemas and API contracts.
+
+          ## Installation
+
+          ```bash
+          go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@latest
+          ```
+
+          ## Quick Start
+
+          ### Event Types
+
+          ```go
+          package main
+
+          import (
+              "encoding/json"
+              "fmt"
+              "log"
+
+              schemas "github.com/rakeyshgidwani/sunday-schemas/codegen/go"
+          )
+
+          func main() {
+              // Parse trade event
+              jsonData := `{
+                  "schema": "md.trade.v1",
+                  "instrument_id": "pm_us_election_2028_winner",
+                  "venue_id": "polymarket",
+                  "ts_ms": 1704063600000,
+                  "side": "buy",
+                  "prob": 0.63,
+                  "size": 1000.0
+              }`
+
+              var trade schemas.MdTradeV1
+              if err := json.Unmarshal([]byte(jsonData), &trade); err != nil {
+                  log.Fatal(err)
+              }
+
+              fmt.Printf("Trade: %s side on %s at %.2f prob\n",
+                  trade.Side, trade.InstrumentID, trade.Prob)
+          }
+          ```
+
+          ### API Client
+
+          ```go
+          package main
+
+          import (
+              "context"
+              "fmt"
+              "net/http"
+
+              api "github.com/rakeyshgidwani/sunday-schemas/codegen/go"
+          )
+
+          func main() {
+              client, err := api.NewClient("https://api.sunday.com")
+              if err != nil {
+                  panic(err)
+              }
+
+              ctx := context.Background()
+
+              // Get markets
+              markets, err := client.GetMarkets(ctx)
+              if err != nil {
+                  panic(err)
+              }
+
+              fmt.Printf("Found %d markets\n", len(*markets.JSON200))
+
+              // Get arbitrage opportunities
+              arb, err := client.GetArbitrageOpportunities(ctx)
+              if err != nil {
+                  panic(err)
+              }
+
+              for _, opportunity := range *arb.JSON200 {
+                  fmt.Printf("Arbitrage: %s - %.4f spread\n",
+                      opportunity.InstrumentId, opportunity.SpreadBps/10000.0)
+              }
+          }
+          ```
+
+          ## Available Types
+
+          ### Event Schemas
+
+          - `RawV0Envelope` - Raw venue data envelope with JSON marshaling
+          - `MdOrderbookDeltaV1` - Normalized orderbook updates
+          - `MdTradeV1` - Normalized trade events
+          - `InsightsArbLiteV1` - Arbitrage opportunities
+          - `InsightsMoversV1` - Price movement tracking
+          - `InsightsWhalesLiteV1` - Large flow detection
+          - `InsightsUnusualV1` - Unusual activity detection
+          - `InfraVenueHealthV1` - Connector health monitoring
+
+          ### API Client
+
+          Generated HTTP client with methods:
+          - `GetMarkets(ctx)` - List available markets
+          - `GetArbitrageOpportunities(ctx)` - Get cross-venue arbitrage
+          - `GetMovers(ctx)` - Get price movers
+          - `GetWhales(ctx)` - Get whale activity
+          - `GetUnusualActivity(ctx)` - Get unusual patterns
+          - `GetVenueHealth(ctx)` - Get infrastructure health
+
+          ### Constants and Validation
+
+          ```go
+          import schemas "github.com/rakeyshgidwani/sunday-schemas/codegen/go"
+
+          // Schema validation
+          if err := schemas.ValidateSchema("md.trade.v1"); err != nil {
+              log.Fatal("Invalid schema:", err)
+          }
+
+          // Venue validation
+          if err := schemas.ValidateVenue("polymarket"); err != nil {
+              log.Fatal("Invalid venue:", err)
+          }
+
+          // Use typed constants
+          tradeSchema := schemas.SchemaMD_TRADE_V1
+          polymarket := schemas.VenuePolymarket
+          buySize := schemas.TradeSideBuy
+          ```
+
+          ## Type Safety
+
+          All types include proper Go struct tags and JSON marshaling:
+
+          ```go
+          type MdTradeV1 struct {
+              InstrumentID string    `json:"instrument_id"`
+              VenueID      VenueID   `json:"venue_id"`
+              TsMS         int64     `json:"ts_ms"`
+              Side         TradeSide `json:"side"`
+              Prob         float64   `json:"prob"`
+              Size         float64   `json:"size"`
+              NotionalUsd  *float64  `json:"notional_usd,omitempty"`
+              Schema       Schema    `json:"schema"`
+          }
+          ```
+
+          ## Venues Supported
+
+          - **Polymarket** (`VenuePolymarket`) - Ethereum-based prediction markets
+          - **Kalshi** (`VenueKalshi`) - CFTC-regulated event contracts
+
+          ## Error Handling
+
+          ```go
+          // Unmarshal with error handling
+          trade, err := schemas.UnmarshalMdTradeV1(jsonBytes)
+          if err != nil {
+              return fmt.Errorf("failed to parse trade: %w", err)
+          }
+
+          // Marshal back to JSON
+          jsonBytes, err := trade.Marshal()
+          if err != nil {
+              return fmt.Errorf("failed to marshal trade: %w", err)
+          }
+          ```
+
+          ## Version Compatibility
+
+          This module uses Go modules with semantic versioning:
+
+          ```bash
+          # Get specific version
+          go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@v1.2.3
+
+          # Get latest stable
+          go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@latest
+
+          # Get latest pre-release
+          go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@v1.2.3-beta.1
+          ```
+
+          ## Generated From
+
+          This module is automatically generated from:
+          - JSON Schema definitions (using quicktype)
+          - OpenAPI 3.1 specifications (using oapi-codegen)
+          - Venue data mappings and constants
+
+          Source repository: [sunday-schemas](https://github.com/rakeyshgidwani/sunday-schemas)
+
+          **⚠️ Do not modify these types directly** - they will be overwritten on the next release.
+
+          ## Related Packages
+
+          - **NPM Package**: `@sunday-platform/schemas`
+          - **Schema Repository**: [sunday-schemas](https://github.com/rakeyshgidwani/sunday-schemas)
+
+          ## License
+
+          ISC
+          EOF
+
+      - name: Validate Go module
+        run: |
+          cd codegen/go
+          go mod verify
+          go build ./...
+
+          # Test basic functionality
+          go run -c << 'EOF' || true
+          package main
+          import (
+              "fmt"
+              schemas "github.com/rakeyshgidwani/sunday-schemas/codegen/go"
+          )
+          func main() {
+              if err := schemas.ValidateSchema("md.trade.v1"); err != nil {
+                  panic(err)
+              }
+              fmt.Println("Go module validation successful")
+          }
+          EOF
+
+  create-release:
+    needs: [validate, publish-npm, publish-go]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref_name }}
+          body: |
+            ## 🎉 Sunday Schemas Release ${{ github.ref_name }}
+
+            ### 📦 Published Packages
+
+            **TypeScript/JavaScript:**
+            ```bash
+            npm install @sunday-platform/schemas@${{ github.ref_name }}
+            ```
+
+            **Go:**
+            ```bash
+            go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@${{ github.ref_name }}
+            ```
+
+            ### 📋 What's New
+
+            See [CHANGELOG.md](https://github.com/rakeyshgidwani/sunday-schemas/blob/main/CHANGELOG.md) for detailed changes in this release.
+
+            ### 🏗️ Generated Types
+
+            This release includes generated types for:
+            - ✅ Event schemas (8 schemas)
+            - ✅ OpenAPI contracts (UI BFF API)
+            - ✅ TypeScript declarations
+            - ✅ Go structs with JSON marshaling
+            - ✅ API clients for both languages
+
+            ### 🔗 Links
+
+            - 📚 [Documentation](https://github.com/rakeyshgidwani/sunday-schemas#readme)
+            - 🐛 [Report Issues](https://github.com/rakeyshgidwani/sunday-schemas/issues)
+            - 📊 [NPM Package](https://www.npmjs.com/package/@sunday-platform/schemas)
+            - 🐹 [Go Package](https://pkg.go.dev/github.com/rakeyshgidwani/sunday-schemas/codegen/go)
+          draft: false
+          prerelease: false

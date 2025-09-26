@@ -1,0 +1,155 @@
+name: Publish NPM Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate schemas and examples
+        run: npm run validate
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Check backward compatibility
+        run: npm run check-compatibility
+
+      - name: Generate TypeScript types
+        run: |
+          npm run generate-ts
+          npm run generate-openapi-ts
+
+      - name: Prepare package for publishing
+        run: |
+          # Update package.json version to match git tag
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+          npm version $TAG_VERSION --no-git-tag-version
+
+          # Create publishable package.json
+          cat > codegen/ts/package.json << EOF
+          {
+            "name": "@sunday-platform/schemas",
+            "version": "$TAG_VERSION",
+            "description": "TypeScript types for Sunday platform event schemas and API contracts",
+            "main": "index.js",
+            "types": "index.d.ts",
+            "files": ["*.ts", "*.d.ts", "*.js"],
+            "keywords": ["sunday", "schemas", "typescript", "prediction-markets", "events"],
+            "author": "Sunday Platform",
+            "license": "ISC",
+            "repository": {
+              "type": "git",
+              "url": "git+https://github.com/rakeyshgidwani/sunday-schemas.git",
+              "directory": "codegen/ts"
+            },
+            "bugs": {
+              "url": "https://github.com/rakeyshgidwani/sunday-schemas/issues"
+            },
+            "homepage": "https://github.com/rakeyshgidwani/sunday-schemas#readme",
+            "publishConfig": {
+              "access": "public"
+            }
+          }
+          EOF
+
+          # Create README for the package
+          cat > codegen/ts/README.md << 'EOF'
+          # @sunday-platform/schemas
+
+          TypeScript types generated from Sunday platform event schemas and API contracts.
+
+          ## Installation
+
+          ```bash
+          npm install @sunday-platform/schemas
+          ```
+
+          ## Usage
+
+          ```typescript
+          import { Trade, OrderbookDelta, SundayEvent } from '@sunday-platform/schemas';
+
+          // Use types for type-safe event handling
+          function handleEvent(event: SundayEvent) {
+            switch (event.schema) {
+              case 'md.trade.v1':
+                console.log('Trade:', event.instrument_id, event.prob);
+                break;
+              case 'md.orderbook.delta.v1':
+                console.log('Orderbook update:', event.bids, event.asks);
+                break;
+            }
+          }
+          ```
+
+          ## Available Types
+
+          - **Event Schemas**: All Sunday platform event types
+          - **API Types**: UI BFF API request/response types
+          - **Utility Types**: Schema constants, unions, and validation helpers
+
+          ## Generated From
+
+          This package is automatically generated from JSON Schema definitions in the [sunday-schemas](https://github.com/rakeyshgidwani/sunday-schemas) repository.
+
+          **Do not modify these types directly** - they will be overwritten on the next release.
+          EOF
+
+      - name: Compile TypeScript to JavaScript
+        run: |
+          cd codegen/ts
+          npx tsc --init --target es2020 --module commonjs --declaration --outDir . --rootDir .
+          npx tsc
+
+      - name: Publish to NPM
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd codegen/ts
+          npm publish
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            ## Changes in this release
+
+            See [CHANGELOG.md](https://github.com/rakeyshgidwani/sunday-schemas/blob/main/CHANGELOG.md) for detailed changes.
+
+            ## NPM Package
+
+            ```bash
+            npm install @sunday-platform/schemas@${{ github.ref_name }}
+            ```
+
+            ## Go Module
+
+            ```go
+            go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@${{ github.ref_name }}
+            ```
+          draft: false
+          prerelease: false

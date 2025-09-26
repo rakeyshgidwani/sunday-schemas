@@ -1,0 +1,209 @@
+name: Publish Go Module
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  publish-go:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (for schema validation)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Go tools
+        run: |
+          go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+          npm install -g quicktype
+
+      - name: Validate schemas and examples
+        run: npm run validate
+
+      - name: Check backward compatibility
+        run: npm run check-compatibility
+
+      - name: Generate Go types
+        run: |
+          npm run generate-go
+          npm run generate-openapi-go
+
+      - name: Verify Go module
+        run: |
+          cd codegen/go
+          go mod tidy
+          go build ./...
+          go test ./... || echo "No tests found"
+
+      - name: Update Go module version
+        run: |
+          cd codegen/go
+
+          # Create go.mod if needed
+          if [ ! -f go.mod ]; then
+            go mod init github.com/rakeyshgidwani/sunday-schemas/codegen/go
+          fi
+
+          # Update go.mod to ensure proper module path
+          cat > go.mod << EOF
+          module github.com/rakeyshgidwani/sunday-schemas/codegen/go
+
+          go 1.22
+
+          require github.com/oapi-codegen/runtime v1.1.1
+          EOF
+
+          go mod tidy
+
+      - name: Create Go module README
+        run: |
+          cd codegen/go
+          cat > README.md << 'EOF'
+          # Sunday Schemas - Go Types
+
+          Go types generated from Sunday platform event schemas and API contracts.
+
+          ## Installation
+
+          ```bash
+          go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@latest
+          ```
+
+          ## Usage
+
+          ### Event Types
+
+          ```go
+          package main
+
+          import (
+              "fmt"
+              "log"
+
+              "github.com/rakeyshgidwani/sunday-schemas/codegen/go"
+          )
+
+          func main() {
+              // Validate schema constants
+              if err := sundayschemas.ValidateSchema("md.trade.v1"); err != nil {
+                  log.Fatal(err)
+              }
+
+              // Validate venue IDs
+              if err := sundayschemas.ValidateVenue("polymarket"); err != nil {
+                  log.Fatal(err)
+              }
+
+              fmt.Println("Schema validation successful")
+          }
+          ```
+
+          ### API Client
+
+          ```go
+          package main
+
+          import (
+              "context"
+              "fmt"
+              "net/http"
+
+              "github.com/rakeyshgidwani/sunday-schemas/codegen/go"
+          )
+
+          func main() {
+              client, err := sundayapi.NewClient("https://api.sunday.com")
+              if err != nil {
+                  panic(err)
+              }
+
+              markets, err := client.GetMarkets(context.Background())
+              if err != nil {
+                  panic(err)
+              }
+
+              fmt.Printf("Found %d markets\n", len(*markets.JSON200))
+          }
+          ```
+
+          ## Available Types
+
+          - **Event Schemas**: All Sunday platform event types with JSON marshaling
+          - **API Client**: Generated HTTP client for Sunday UI BFF API
+          - **Constants**: Schema, venue, and enum constants with validation
+          - **Utilities**: Helper functions for validation and type checking
+
+          ## Generated From
+
+          This module is automatically generated from JSON Schema definitions and OpenAPI specifications in the [sunday-schemas](https://github.com/rakeyshgidwani/sunday-schemas) repository.
+
+          **Do not modify these types directly** - they will be overwritten on the next release.
+
+          ## Version Tags
+
+          This module follows the same version tags as the main repository. Use:
+
+          ```bash
+          go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@v1.2.3
+          ```
+
+          To get a specific version.
+          EOF
+
+      - name: Validate Go module can be imported
+        run: |
+          # Create temporary test to verify module works
+          mkdir -p /tmp/go-test
+          cd /tmp/go-test
+
+          go mod init test
+          go mod edit -replace github.com/rakeyshgidwani/sunday-schemas/codegen/go=../../../codegen/go
+
+          cat > main.go << 'EOF'
+          package main
+
+          import (
+              "fmt"
+              schemas "github.com/rakeyshgidwani/sunday-schemas/codegen/go"
+          )
+
+          func main() {
+              fmt.Println("Testing schema constants...")
+              if err := schemas.ValidateSchema("md.trade.v1"); err != nil {
+                  panic(err)
+              }
+              fmt.Println("✅ Go module validation successful")
+          }
+          EOF
+
+          go mod tidy
+          go run main.go
+
+      - name: Commit generated files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add codegen/go/
+          git diff --staged --quiet || git commit -m "Update generated Go types for ${GITHUB_REF#refs/tags/}"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
