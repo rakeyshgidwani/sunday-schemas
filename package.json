@@ -30,7 +30,9 @@
     "dev": "npm run validate",
     "deploy": "./scripts/deploy.sh",
     "deploy:dry-run": "./scripts/deploy.sh --dry-run",
-    "deploy:skip-tests": "./scripts/deploy.sh --skip-tests"
+    "deploy:skip-tests": "./scripts/deploy.sh --skip-tests",
+    "validate-deployment": "./scripts/validate-deployment.sh",
+    "validate-deployment:quick": "./scripts/validate-deployment.sh --quick"
   },
   "repository": {
     "type": "git",

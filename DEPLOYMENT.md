@@ -73,9 +73,41 @@ npm run deploy
 - **Tag**: `codegen/go/v1.0.3`
 - **Usage**: `go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@v1.0.3`
 
-## 🔍 Verification
+## 🔍 Deployment Validation
 
-After deployment, the script shows:
+### Automatic Validation
+The deploy script automatically runs validation after deployment to ensure both packages are accessible.
+
+### Manual Validation
+You can also validate deployments manually:
+
+```bash
+# Validate specific version
+./scripts/validate-deployment.sh --version 1.0.3
+
+# Quick validation (skip slow checks)
+npm run validate-deployment:quick --version 1.0.3
+
+# Verbose output for debugging
+./scripts/validate-deployment.sh --version 1.0.3 --verbose
+```
+
+### What Gets Validated
+✅ **NPM Package Checks:**
+- Package exists on npmjs.org
+- Package is downloadable
+- Package imports correctly
+- TypeScript definitions included
+
+✅ **Go Module Checks:**
+- Git tags exist (both `v1.0.3` and `codegen/go/v1.0.3`)
+- Module imports and compiles
+- Schema constants accessible
+- Validation functions work
+
+### Sample Validation Output
+
+After deployment, you'll see:
 
 ```
 ======================================

@@ -216,23 +216,18 @@ else
     fi
 fi
 
-# Step 8: Verify Go module accessibility
-log_info "Step 8: Verifying Go module accessibility..."
+# Step 8: Verify deployment with validation script
+log_info "Step 8: Validating deployment..."
 
 if [ "$DRY_RUN" = true ]; then
-    echo "Would verify Go module at: github.com/rakeyshgidwani/sunday-schemas/codegen/go@$GO_TAG"
+    echo "Would run: ./scripts/validate-deployment.sh --version $VERSION --quick"
 else
-    # Wait a moment for Go proxy to pick up the module
-    log_info "Waiting 30 seconds for Go proxy to update..."
-    sleep 30
-
-    # Try to fetch the module info (this might fail for private repos, but shows the attempt)
-    log_info "Checking Go module availability..."
-    GO_MODULE_URL="https://proxy.golang.org/github.com/rakeyshgidwani/sunday-schemas/codegen/go/@v/$GO_TAG.info"
-    if curl -s --fail "$GO_MODULE_URL" > /dev/null 2>&1; then
-        log_success "Go module is publicly accessible"
+    # Run validation to ensure deployment was successful
+    log_info "Running deployment validation..."
+    if ./scripts/validate-deployment.sh --version $VERSION --quick; then
+        log_success "Deployment validation passed"
     else
-        log_warning "Go module not publicly accessible (may be private repo - this is expected)"
+        log_warning "Deployment validation had issues - packages may still be functional"
     fi
 fi
 

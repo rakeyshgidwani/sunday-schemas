@@ -43,9 +43,10 @@ go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@v1.0.1
 
 **Available Commands:**
 ```bash
-npm run validate     # Validate schemas and examples
-npm run build        # Generate TypeScript and Go types
-npm run deploy       # Deploy new version (interactive)
+npm run validate                    # Validate schemas and examples
+npm run build                       # Generate TypeScript and Go types
+npm run deploy                      # Deploy new version (interactive)
+npm run validate-deployment         # Validate deployed packages
 ```
 
 **Deployment:**
