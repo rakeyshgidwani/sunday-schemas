@@ -23,13 +23,6 @@ const (
 	SchemaRAW_V0 EventSchema = "raw.v0"
 )
 
-// VenueID represents supported venues
-type VenueID string
-
-const (
-	VenuePolymarket VenueID = "polymarket"
-	VenueKalshi     VenueID = "kalshi"
-)
 
 // TradeSide represents trade directions
 type TradeSide string
@@ -61,7 +54,7 @@ func ValidateSchema(schema string) error {
 // ValidateVenue checks if a venue ID is valid
 func ValidateVenue(venue string) error {
 	switch VenueID(venue) {
-	case VenuePolymarket, VenueKalshi:
+	case Polymarket, Kalshi:
 		return nil
 	default:
 		return fmt.Errorf("invalid venue: %s", venue)
@@ -84,5 +77,5 @@ func AllSchemas() []EventSchema {
 
 // AllVenues returns all valid venue IDs
 func AllVenues() []VenueID {
-	return []VenueID{VenuePolymarket, VenueKalshi}
+	return []VenueID{Polymarket, Kalshi}
 }
