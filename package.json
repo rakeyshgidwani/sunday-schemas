@@ -27,7 +27,10 @@
     "analyze-coverage": "node scripts/analyze-coverage.js",
     "ci-validate": "npm run validate && npm run lint && npm run check-compatibility",
     "build": "npm run validate && npm run generate",
-    "dev": "npm run validate"
+    "dev": "npm run validate",
+    "deploy": "./scripts/deploy.sh",
+    "deploy:dry-run": "./scripts/deploy.sh --dry-run",
+    "deploy:skip-tests": "./scripts/deploy.sh --skip-tests"
   },
   "repository": {
     "type": "git",

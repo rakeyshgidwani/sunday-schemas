@@ -5,7 +5,7 @@
 This repository serves as the single source of truth for:
 - **Event schemas** (JSON Schema) for Kafka topics across Sunday services
 - **OpenAPI specification** for the UI BFF HTTP API
-- **Generated types** published as npm (`@sunday/schemas`) and Go modules
+- **Generated types** published as npm (`sunday-schemas`) and Go modules
 
 ## Repository Structure
 
@@ -25,19 +25,39 @@ This repository serves as the single source of truth for:
   /scripts/                 # Build and validation scripts
 ```
 
-## Development
+## Usage
 
-**Phase 1 - Foundation Setup ✅**
-- Repository structure created
-- Basic tooling configured
-- Registry files established
+### Installation
 
-**Next Steps:**
-- Phase 2: Schema Definitions
-- Phase 3: OpenAPI Specification
-- Phase 4: Validation & Tooling
+**TypeScript/JavaScript:**
+```bash
+npm install sunday-schemas
+```
 
-See [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) for detailed implementation roadmap.
+**Go:**
+```bash
+go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@v1.0.1
+```
+
+### Development
+
+**Available Commands:**
+```bash
+npm run validate     # Validate schemas and examples
+npm run build        # Generate TypeScript and Go types
+npm run deploy       # Deploy new version (interactive)
+```
+
+**Deployment:**
+```bash
+# Deploy specific version
+./scripts/deploy.sh --version 1.0.2
+
+# Preview deployment
+npm run deploy:dry-run --version 1.0.2
+```
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment guide.
 
 ## Architecture
 
