@@ -60,6 +60,12 @@ npm run deploy:dry-run --version 1.0.2
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment guide.
 
+## Documentation
+
+📚 **For Development Teams**: [Complete Integration Guide](./docs/INTEGRATION_GUIDE_FOR_TEAMS.md)
+📊 **For Stakeholders**: [Executive Summary](./docs/EXECUTIVE_SUMMARY.md)
+🚀 **For Deployment**: [Deployment Guide](./DEPLOYMENT.md)
+
 ## Architecture
 
 This repository contains **no business logic** - only schema definitions, validation, and code generation.
