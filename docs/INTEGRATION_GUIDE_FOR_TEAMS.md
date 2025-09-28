@@ -110,7 +110,13 @@ npm install -D sunday-schemas
 ```
 
 ### Go Module
+
+⚠️ **Important**: This is a private repository. See [Private Repository Setup](./PRIVATE_REPOSITORY_SETUP.md) if you get permission errors.
+
 ```bash
+# Configure for private repository (one-time setup)
+go env -w GOPRIVATE=github.com/rakeyshgidwani/sunday-schemas
+
 # Install latest version
 go get github.com/rakeyshgidwani/sunday-schemas/codegen/go
 
@@ -120,6 +126,8 @@ go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@v1.0.1
 # Add to go.mod
 require github.com/rakeyshgidwani/sunday-schemas/codegen/go v1.0.1
 ```
+
+**If you get 404/permission errors**: Follow the [Private Repository Setup Guide](./PRIVATE_REPOSITORY_SETUP.md) for detailed configuration steps.
 
 ### Version Compatibility
 
@@ -808,21 +816,28 @@ ls node_modules/sunday-schemas/codegen/ts/*.d.ts
 
 #### 3. **Go Module Issues**
 
-**Problem**: Cannot fetch Go module
+**Problem**: Cannot fetch Go module (404 Not Found)
 ```bash
 go: github.com/rakeyshgidwani/sunday-schemas/codegen/go@v1.0.1: verifying module
+fatal: could not read Username for 'https://github.com': terminal prompts disabled
 ```
 
-**Solution**:
+**Solution**: This is a private repository access issue. Follow the **[Private Repository Setup Guide](./PRIVATE_REPOSITORY_SETUP.md)** for complete setup instructions.
+
+**Quick fix**:
 ```bash
-# Ensure you have git access to the repository
-git ls-remote https://github.com/rakeyshgidwani/sunday-schemas.git
+# Configure GOPRIVATE (tells Go to bypass public proxy)
+go env -w GOPRIVATE=github.com/rakeyshgidwani/sunday-schemas
 
-# For private repositories, configure git credentials
-git config --global credential.helper store
+# Configure Git authentication (choose one):
+# Option A: Personal Access Token
+git config --global url."https://USERNAME:TOKEN@github.com/".insteadOf "https://github.com/"
 
-# Clear Go module cache if needed
-go clean -modcache
+# Option B: SSH
+git config --global url."git@github.com:".insteadOf "https://github.com/"
+
+# Then try again
+go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@v1.0.1
 ```
 
 #### 4. **Version Mismatches**

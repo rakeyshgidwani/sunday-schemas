@@ -36,8 +36,14 @@ npm install sunday-schemas
 
 **Go:**
 ```bash
+# Configure for private repository (one-time setup)
+go env -w GOPRIVATE=github.com/rakeyshgidwani/sunday-schemas
+
+# Install module
 go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@v1.0.1
 ```
+
+> **Note**: This is a private repository. See [Private Repository Setup](./docs/PRIVATE_REPOSITORY_SETUP.md) if you encounter permission errors.
 
 ### Development
 
