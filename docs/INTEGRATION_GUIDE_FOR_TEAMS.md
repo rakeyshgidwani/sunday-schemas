@@ -2,6 +2,16 @@
 
 > **Comprehensive guide for integrating sunday-schemas into your project**
 
+## 🚨 **IMPORTANT: Field Name Corrections**
+
+**If you encounter type mismatches**, see the [**Corrected Integration Guide**](./CORRECTED_INTEGRATION_GUIDE.md) for verified field names and working examples.
+
+**Key corrections for Go usage:**
+- Use `schemas.RawEnvelope` (not `RawEnvelopeV0`)
+- Use `TsEventMs` (not `TsEventMS`)
+- Use `TsIngestMs` (not `TsIngestMS`)
+- Use `Bids/Asks` directly (not `BidsDelta/AsksDelta`)
+
 ## 📋 Table of Contents
 
 1. [Overview](#overview)
@@ -82,8 +92,8 @@ event := schemas.RawEnvelope{
     Stream:           "orderbook",
     InstrumentNative: "some-instrument",
     PartitionKey:     "polymarket:some-instrument",
-    TsEventMs:        time.Now().UnixMilli(),
-    TsIngestMs:       time.Now().UnixMilli(),
+    TsEventMs:        time.Now().UnixMilli(),  // Note: TsEventMs (not TsEventMS)
+    TsIngestMs:       time.Now().UnixMilli(),  // Note: TsIngestMs (not TsIngestMS)
     Payload:          map[string]interface{}{/* venue data */},
 }
 
@@ -296,7 +306,7 @@ import (
 
 ### Working with Event Envelopes
 ```go
-// Creating events
+// Creating events (verified working pattern from sunday-connectors)
 func CreateRawEvent(venueID, stream, instrument string, payload interface{}) schemas.RawEnvelope {
     now := time.Now().UTC()
     return schemas.RawEnvelope{
@@ -305,8 +315,8 @@ func CreateRawEvent(venueID, stream, instrument string, payload interface{}) sch
         Stream:           stream,
         InstrumentNative: instrument,
         PartitionKey:     venueID + ":" + instrument,
-        TsEventMs:        now.UnixMilli(),
-        TsIngestMs:       now.UnixMilli(),
+        TsEventMs:        now.UnixMilli(),  // ✅ Correct: TsEventMs
+        TsIngestMs:       now.UnixMilli(),  // ✅ Correct: TsIngestMs
         Payload:          payload,
     }
 }
@@ -416,7 +426,25 @@ func ProcessGenericPayload(event schemas.RawEnvelope) error {
 
 **Purpose**: Universal wrapper for all venue-specific event data
 
-**Required Fields**:
+**Go Type Definition** (✅ **Verified Working**):
+```go
+type RawEnvelope struct {
+    Schema           string      `json:"schema"`                    // "raw.v0"
+    VenueID          string      `json:"venue_id"`                  // "polymarket" | "kalshi"
+    Stream           string      `json:"stream"`                    // "orderbook" | "trades"
+    InstrumentNative string      `json:"instrument_native"`         // Venue-specific instrument ID
+    PartitionKey     string      `json:"partition_key"`             // Usually venue:instrument
+    TsEventMs        int64       `json:"ts_event_ms"`              // Event timestamp (milliseconds)
+    TsIngestMs       int64       `json:"ts_ingest_ms"`             // Ingestion timestamp (milliseconds)
+    Payload          interface{} `json:"payload"`                   // Venue-specific event data
+
+    // Optional fields
+    IsHistorical     *bool       `json:"is_historical,omitempty"`   // Historical/backfill data
+    BackfillTsMs     *int64      `json:"backfill_ts_ms,omitempty"`  // Backfill timestamp
+}
+```
+
+**TypeScript Type Definition**:
 ```typescript
 {
   schema: "raw.v0",              // Schema identifier
@@ -426,13 +454,7 @@ func ProcessGenericPayload(event schemas.RawEnvelope) error {
   partition_key: string,         // Kafka partition key (usually venue:instrument)
   ts_event_ms: number,          // Event timestamp (milliseconds)
   ts_ingest_ms: number,         // Ingestion timestamp (milliseconds)
-  payload: object               // Venue-specific event data
-}
-```
-
-**Optional Fields**:
-```typescript
-{
+  payload: object,               // Venue-specific event data
   is_historical?: boolean,       // True if historical/backfill data
   backfill_ts_ms?: number       // Backfill timestamp if applicable
 }
@@ -441,32 +463,32 @@ func ProcessGenericPayload(event schemas.RawEnvelope) error {
 ### Market Data Events
 
 #### Orderbook Delta (`md.orderbook.delta.v1`)
-```typescript
-{
-  schema: "md.orderbook.delta.v1",
-  venue_id: string,
-  instrument_id: string,         // Normalized instrument ID
-  sequence: number,              // Sequence number for ordering
-  ts_event_ms: number,
-  bids_delta: [number, number][], // [price, size] pairs (implied probability)
-  asks_delta: [number, number][], // [price, size] pairs
-  is_snapshot: boolean           // True if full snapshot vs delta
+```go
+// Go type definition (✅ Verified)
+type OrderbookDelta struct {
+    Schema       string      `json:"schema"`           // "md.orderbook.delta.v1"
+    InstrumentID string      `json:"instrument_id"`    // Normalized instrument ID
+    VenueID      string      `json:"venue_id"`         // "polymarket" | "kalshi"
+    TsMs         int64       `json:"ts_ms"`           // Timestamp (milliseconds)
+    Seq          int64       `json:"seq"`             // Sequence number for ordering
+    Bids         [][]float64 `json:"bids"`            // [price, size] pairs
+    Asks         [][]float64 `json:"asks"`            // [price, size] pairs
+    IsSnapshot   bool        `json:"is_snapshot"`     // True if full snapshot vs delta
 }
 ```
 
 #### Trade (`md.trade.v1`)
-```typescript
-{
-  schema: "md.trade.v1",
-  venue_id: string,
-  instrument_id: string,
-  sequence: number,
-  ts_event_ms: number,
-  trade_id: string,
-  side: "buy" | "sell",         // Trade direction
-  price: number,                // Implied probability [0.0, 1.0]
-  size: number,                 // Trade size in base units
-  is_taker: boolean            // True if taker trade
+```go
+// Go type definition (✅ Verified)
+type Trade struct {
+    Schema       string   `json:"schema"`             // "md.trade.v1"
+    InstrumentID string   `json:"instrument_id"`      // Normalized instrument ID
+    VenueID      string   `json:"venue_id"`           // "polymarket" | "kalshi"
+    TsMs         int64    `json:"ts_ms"`             // Timestamp (milliseconds)
+    Side         string   `json:"side"`               // "buy" | "sell"
+    Prob         float64  `json:"prob"`               // Implied probability [0.0, 1.0]
+    Size         float64  `json:"size"`               // Trade size in base units
+    NotionalUsd  *float64 `json:"notional_usd,omitempty"` // Optional USD value
 }
 ```
 
