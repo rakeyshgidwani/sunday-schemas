@@ -1,6 +1,6 @@
 {
   "name": "@sunday/schemas",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "description": "TypeScript schemas and types for Sunday platform events and APIs",
   "keywords": ["sunday", "schemas", "typescript", "events", "api"],
