@@ -129,4 +129,4 @@ func main() {
 ---
 
 *This documentation is automatically generated from the actual Go codegen output.*
-*Last updated: 2025-09-29T16:23:51.185Z*
+*Last updated: 2025-09-29T16:38:38.256Z*

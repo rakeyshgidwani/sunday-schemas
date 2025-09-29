@@ -119,4 +119,4 @@ Add to `tsconfig.json`:
 ---
 
 *This documentation is automatically generated from the actual TypeScript codegen output.*
-*Last updated: 2025-09-29T16:23:51.183Z*
+*Last updated: 2025-09-29T16:38:38.254Z*
