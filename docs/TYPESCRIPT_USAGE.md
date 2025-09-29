@@ -47,14 +47,14 @@ Pin to specific version in `package.json`:
 ```json
 {
   "dependencies": {
-    "@sunday/schemas": "1.0.8"
+    "@rakeyshgidwani/sunday-schemas": "1.0.8"
   }
 }
 ```
 
 Check available versions:
 ```bash
-npm view @sunday/schemas versions --json
+npm view @rakeyshgidwani/sunday-schemas versions --json
 ```
 
 ## Documentation Access for AI Agents
@@ -62,18 +62,18 @@ npm view @sunday/schemas versions --json
 Access bundled documentation:
 ```bash
 # View package info
-npm info @sunday/schemas
+npm info @rakeyshgidwani/sunday-schemas
 
 # Show package contents
-npm list @sunday/schemas --depth=0
+npm list @rakeyshgidwani/sunday-schemas --depth=0
 
 # Locate package files
-npm list @sunday/schemas --parseable
+npm list @rakeyshgidwani/sunday-schemas --parseable
 ```
 
 Access embedded schema files:
 ```typescript
-import { getSchema, listSchemas } from '@sunday/schemas';
+import { getSchema, listSchemas } from '@rakeyshgidwani/sunday-schemas';
 
 // Read embedded JSON schema
 const schemaContent = getSchema('md.orderbook.delta.v1');
