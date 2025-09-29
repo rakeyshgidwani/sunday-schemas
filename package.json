@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Schema registry for Sunday platform event definitions and API contracts",
   "main": "codegen/ts/index.js",
+  "type": "module",
+  "workspaces": [
+    "packages/ts"
+  ],
   "directories": {
     "doc": "docs"
   },
@@ -32,7 +36,12 @@
     "deploy:dry-run": "./scripts/deploy.sh --dry-run",
     "deploy:skip-tests": "./scripts/deploy.sh --skip-tests",
     "validate-deployment": "./scripts/validate-deployment.sh",
-    "validate-deployment:quick": "./scripts/validate-deployment.sh --quick"
+    "validate-deployment:quick": "./scripts/validate-deployment.sh --quick",
+    "build:ts": "npm run build --workspace=@sunday/schemas",
+    "verify:versions": "node scripts/check-version-matches-tag.mjs",
+    "bundle:openapi": "npx @redocly/cli bundle openapi/ui.v1.yaml -o openapi/ui.v1.bundled.json",
+    "build:agents": "node scripts/build-agents-pack.mjs",
+    "release:prepare": "npm run bundle:openapi && npm run build:ts && npm run verify:versions"
   },
   "repository": {
     "type": "git",
@@ -58,6 +67,7 @@
     "jsonlint": "^1.6.3",
     "openapi-diff": "^0.24.1",
     "openapi-typescript": "^7.9.1",
-    "spectral": "^0.0.0"
+    "spectral": "^0.0.0",
+    "@redocly/cli": "^1.0.0"
   }
 }
