@@ -5,7 +5,7 @@
 This repository serves as the single source of truth for:
 - **Event schemas** (JSON Schema) for Kafka topics across Sunday services
 - **OpenAPI specification** for the UI BFF HTTP API
-- **Generated types** published as npm (`sunday-schemas`) and Go modules
+- **Generated types** published as npm (`@rakeyshgidwani/sunday-schemas`) and Go modules
 
 ## Repository Structure
 
@@ -31,19 +31,13 @@ This repository serves as the single source of truth for:
 
 **TypeScript/JavaScript:**
 ```bash
-npm install sunday-schemas
+npm install @rakeyshgidwani/sunday-schemas
 ```
 
 **Go:**
 ```bash
-# Configure for private repository (one-time setup)
-go env -w GOPRIVATE=github.com/rakeyshgidwani/sunday-schemas
-
-# Install module
-go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@v1.0.1
+go get github.com/rakeyshgidwani/sunday-schemas/go@latest
 ```
-
-> **Note**: This is a private repository. See [Private Repository Setup](./docs/PRIVATE_REPOSITORY_SETUP.md) if you encounter permission errors.
 
 ### Development
 
@@ -71,6 +65,8 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment guide.
 📚 **For Development Teams**: [Complete Integration Guide](./docs/INTEGRATION_GUIDE_FOR_TEAMS.md)
 📊 **For Stakeholders**: [Executive Summary](./docs/EXECUTIVE_SUMMARY.md)
 🚀 **For Deployment**: [Deployment Guide](./DEPLOYMENT.md)
+🐹 **Go Usage**: [Go Module Integration](./docs/GO_MODULE_USAGE.md)
+📦 **TypeScript Usage**: [TypeScript Integration](./docs/TYPESCRIPT_USAGE.md)
 
 ## Architecture
 
