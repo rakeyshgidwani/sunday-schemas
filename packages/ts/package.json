@@ -1,6 +1,6 @@
 {
   "name": "sunday-schemas-test",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "type": "module",
   "description": "TypeScript schemas and types for Sunday platform events and APIs",
   "keywords": ["sunday", "schemas", "typescript", "events", "api"],
