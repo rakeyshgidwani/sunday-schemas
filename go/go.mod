@@ -1,4 +1,4 @@
-module github.com/sunday-xyz/schemas/go
+module github.com/rakeyshgidwani/sunday-schemas/go
 
 go 1.23
 

@@ -181,7 +181,7 @@ jobs:
 
             ### Published Packages
             - **npm**: `@rakeyshgidwani/sunday-schemas@${{ github.ref_name }}`
-            - **Go**: `github.com/sunday-xyz/schemas/go@${{ github.ref_name }}`
+            - **Go**: `github.com/rakeyshgidwani/sunday-schemas/go@${{ github.ref_name }}`
 
             ### Assets
             - `agents/pack.zip` - Complete schemas bundle for automated consumption
