@@ -92,26 +92,7 @@ created_count=0
 skipped_count=0
 
 for tag in $root_tags; do
-    go_tag="go/$tag"
     codegen_go_tag="codegen/go/$tag"
-
-    # Check if go/ tag already exists
-    if git tag -l | grep -q "^$go_tag$"; then
-        log_info "⏭️  $go_tag already exists, skipping"
-        skipped_count=$((skipped_count + 1))
-    else
-        if [ "$DRY_RUN" = true ]; then
-            echo "Would create: $go_tag -> $tag"
-        else
-            # Create the go/ prefixed tag pointing to the same commit as the root tag
-            if git tag "$go_tag" "$tag" -m "Go module release $go_tag"; then
-                log_success "✅ Created $go_tag"
-                created_count=$((created_count + 1))
-            else
-                log_error "❌ Failed to create $go_tag"
-            fi
-        fi
-    fi
 
     # Check if codegen/go/ tag already exists
     if git tag -l | grep -q "^$codegen_go_tag$"; then
@@ -122,7 +103,7 @@ for tag in $root_tags; do
             echo "Would create: $codegen_go_tag -> $tag"
         else
             # Create the codegen/go/ prefixed tag pointing to the same commit as the root tag
-            if git tag "$codegen_go_tag" "$tag" -m "Codegen Go module release $codegen_go_tag"; then
+            if git tag "$codegen_go_tag" "$tag" -m "Go module release $codegen_go_tag"; then
                 log_success "✅ Created $codegen_go_tag"
                 created_count=$((created_count + 1))
             else
@@ -143,18 +124,7 @@ if [ "$DRY_RUN" = false ] && [ $created_count -gt 0 ]; then
 
     # Push all new tags
     for tag in $root_tags; do
-        go_tag="go/$tag"
         codegen_go_tag="codegen/go/$tag"
-
-        if git tag -l | grep -q "^$go_tag$"; then
-            # Only push if this tag was just created (not skipped)
-            if ! git ls-remote --tags origin | grep -q "refs/tags/$go_tag$"; then
-                if [ "$DRY_RUN" = false ]; then
-                    git push origin "$go_tag"
-                    log_success "📤 Pushed $go_tag"
-                fi
-            fi
-        fi
 
         if git tag -l | grep -q "^$codegen_go_tag$"; then
             # Only push if this tag was just created (not skipped)
@@ -172,11 +142,6 @@ if [ "$DRY_RUN" = false ] && [ $created_count -gt 0 ]; then
 
     echo ""
     echo "🔍 Verify the tags are working:"
-    echo "  # Modular structure (separate packages):"
-    echo "  go list -m -versions github.com/rakeyshgidwani/sunday-schemas/go"
-    echo "  go get github.com/rakeyshgidwani/sunday-schemas/go@$(echo "$root_tags" | tail -1)"
-    echo ""
-    echo "  # Unified package structure (all types in one package):"
     echo "  go list -m -versions github.com/rakeyshgidwani/sunday-schemas/codegen/go"
     echo "  go get github.com/rakeyshgidwani/sunday-schemas/codegen/go@$(echo "$root_tags" | tail -1)"
 

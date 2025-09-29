@@ -285,7 +285,7 @@ log_step "5" "Commit version bump and create tags"
 
 if [ "$DRY_RUN" = true ]; then
     echo "Would commit version bump and generated code"
-    echo "Would create tags: v$VERSION, go/v$VERSION"
+    echo "Would create tags: v$VERSION, codegen/go/v$VERSION"
 else
     # Commit version bump and generated code
     git add .
@@ -299,9 +299,9 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 
     # Create tags
     git tag "v$VERSION" -m "Release v$VERSION"
-    git tag "go/v$VERSION" -m "Go module release v$VERSION"
+    git tag "codegen/go/v$VERSION" -m "Go module release v$VERSION"
 
-    log_success "Created tags: v$VERSION, go/v$VERSION"
+    log_success "Created tags: v$VERSION, codegen/go/v$VERSION"
 fi
 
 # Step 6: Push to trigger CI/CD
@@ -314,7 +314,7 @@ else
     log_info "Pushing changes and tags to trigger GitHub Actions..."
     git push origin main
     git push origin "v$VERSION"
-    git push origin "go/v$VERSION"
+    git push origin "codegen/go/v$VERSION"
 
     log_success "Pushed to GitHub - CI/CD pipeline started"
 
@@ -353,8 +353,8 @@ else
 
         # Check Go module
         if [ "$go_published" = false ]; then
-            if curl -s "https://proxy.golang.org/github.com/rakeyshgidwani/sunday-schemas/go/@v/v$VERSION.info" &>/dev/null; then
-                log_success "✅ Go module github.com/rakeyshgidwani/sunday-schemas/go@v$VERSION is live"
+            if curl -s "https://proxy.golang.org/github.com/rakeyshgidwani/sunday-schemas/codegen/go/@v/v$VERSION.info" &>/dev/null; then
+                log_success "✅ Go module github.com/rakeyshgidwani/sunday-schemas/codegen/go@v$VERSION is live"
                 go_published=true
             fi
         fi
@@ -370,7 +370,7 @@ else
     if [ "$npm_published" = false ] || [ "$go_published" = false ]; then
         log_warning "Some packages may still be publishing. Check manually:"
         [ "$npm_published" = false ] && echo "  - NPM: npm view @rakeyshgidwani/sunday-schemas@$VERSION"
-        [ "$go_published" = false ] && echo "  - Go: go list -m github.com/rakeyshgidwani/sunday-schemas/go@v$VERSION"
+        [ "$go_published" = false ] && echo "  - Go: go list -m github.com/rakeyshgidwani/sunday-schemas/codegen/go@v$VERSION"
     fi
 fi
 
@@ -419,7 +419,7 @@ echo "======================================"
 echo ""
 echo "📦 Version:        $VERSION"
 echo "🏷️  NPM Package:    @rakeyshgidwani/sunday-schemas@$VERSION"
-echo "🐹 Go Module:      github.com/rakeyshgidwani/sunday-schemas/go@v$VERSION"
+echo "🐹 Go Module:      github.com/rakeyshgidwani/sunday-schemas/codegen/go@v$VERSION"
 echo "📋 GitHub Release: https://github.com/rakeyshgidwani/sunday-schemas/releases/tag/v$VERSION"
 echo ""
 

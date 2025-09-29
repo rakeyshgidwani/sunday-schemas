@@ -113,10 +113,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create go/ tag matching root tag
+      - name: Create codegen/go/ tag matching root tag
         run: |
           GIT_TAG=${GITHUB_REF_NAME}
-          GO_TAG="go/${GIT_TAG}"
+          GO_TAG="codegen/go/${GIT_TAG}"
           echo "Creating Go tag: $GO_TAG"
           git tag -a "$GO_TAG" -m "Go module release $GO_TAG" "$GIT_TAG" || true
           git push origin "$GO_TAG" || true
@@ -181,7 +181,7 @@ jobs:
 
             ### Published Packages
             - **npm**: `@rakeyshgidwani/sunday-schemas@${{ github.ref_name }}`
-            - **Go**: `github.com/rakeyshgidwani/sunday-schemas/go@${{ github.ref_name }}`
+            - **Go**: `github.com/rakeyshgidwani/sunday-schemas/codegen/go@${{ github.ref_name }}`
 
             ### Assets
             - `agents/pack.zip` - Complete schemas bundle for automated consumption
