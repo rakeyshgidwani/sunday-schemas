@@ -4,6 +4,10 @@ on:
   push:
     tags: ["v*.*.*"]
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   validate-and-build:
     runs-on: ubuntu-latest
@@ -56,6 +60,9 @@ jobs:
   publish-npm:
     needs: validate-and-build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
