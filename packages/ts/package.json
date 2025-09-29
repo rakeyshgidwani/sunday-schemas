@@ -1,5 +1,5 @@
 {
-  "name": "@sunday/schemas",
+  "name": "@rakeshgidwani/sunday-schemas",
   "version": "1.0.3",
   "type": "module",
   "description": "TypeScript schemas and types for Sunday platform events and APIs",

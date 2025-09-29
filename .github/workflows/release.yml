@@ -88,13 +88,13 @@ jobs:
         if: ${{ !contains(github.ref_name, '-rc.') }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --workspace=@sunday/schemas
+        run: npm publish --workspace=@rakeshgidwani/sunday-schemas
 
       - name: Publish to npm (prerelease → next)
         if: ${{ contains(github.ref_name, '-rc.') }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --workspace=@sunday/schemas --tag next
+        run: npm publish --workspace=@rakeshgidwani/sunday-schemas --tag next
 
   create-go-tag:
     needs: validate-and-build
@@ -173,7 +173,7 @@ jobs:
             ## Sunday Schemas Release ${{ github.ref_name }}
 
             ### Published Packages
-            - **npm**: `@sunday/schemas@${{ github.ref_name }}`
+            - **npm**: `@rakeshgidwani/sunday-schemas@${{ github.ref_name }}`
             - **Go**: `github.com/sunday-xyz/schemas/go@${{ github.ref_name }}`
 
             ### Assets

@@ -37,7 +37,7 @@
     "deploy:skip-tests": "./scripts/deploy.sh --skip-tests",
     "validate-deployment": "./scripts/validate-deployment.sh",
     "validate-deployment:quick": "./scripts/validate-deployment.sh --quick",
-    "build:ts": "npm run build --workspace=@sunday/schemas",
+    "build:ts": "npm run build --workspace=@rakeshgidwani/sunday-schemas",
     "verify:versions": "node scripts/check-version-matches-tag.mjs",
     "bundle:openapi": "npx @redocly/cli bundle openapi/ui.v1.yaml -o openapi/ui.v1.bundled.json",
     "build:agents": "node scripts/build-agents-pack.mjs",
