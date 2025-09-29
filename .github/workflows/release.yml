@@ -29,20 +29,18 @@ jobs:
         run: npx spectral lint openapi/ui.v1.yaml
 
       - name: Lint JSON schemas
-        run: npx jsonlint -q schemas/json/**/*.json schemas/examples/**/*.json
+        run: |
+          find schemas/json -name "*.json" -exec npx jsonlint -q {} \;
+          find schemas/examples -name "*.json" -exec npx jsonlint -q {} \;
 
-      - name: Validate examples against schemas
-        run: npx ajv validate -s "schemas/json/**/*.json" -d "schemas/examples/**/*.json" || true
-
-      - name: Check schema topics coverage
-        run: node scripts/validate-schemas.js
-
-      - name: Check example validation
-        run: node scripts/validate-examples.js
+      - name: Validate schemas and examples
+        run: |
+          node scripts/validate-schemas.js
+          node scripts/validate-examples.js
 
       # Bundle OpenAPI for both package and assets
       - name: Bundle OpenAPI spec
-        run: npx redocly bundle openapi/ui.v1.yaml -o openapi/ui.v1.bundled.json
+        run: npx @redocly/cli bundle openapi/ui.v1.yaml -o openapi/ui.v1.bundled.json
 
       - name: Build TypeScript package
         run: npm run build:ts
