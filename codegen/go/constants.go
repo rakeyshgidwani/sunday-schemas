@@ -23,6 +23,11 @@ const (
 	SchemaRAW_V0 EventSchema = "raw.v0"
 )
 
+// Additional venue constants (VenueID type is defined in schemas.go)
+const (
+	VenuePolymarket VenueID = "polymarket"
+	VenueKalshi     VenueID = "kalshi"
+)
 
 // TradeSide represents trade directions
 type TradeSide string
@@ -54,7 +59,7 @@ func ValidateSchema(schema string) error {
 // ValidateVenue checks if a venue ID is valid
 func ValidateVenue(venue string) error {
 	switch VenueID(venue) {
-	case Polymarket, Kalshi:
+	case VenuePolymarket, VenueKalshi:
 		return nil
 	default:
 		return fmt.Errorf("invalid venue: %s", venue)
@@ -77,5 +82,5 @@ func AllSchemas() []EventSchema {
 
 // AllVenues returns all valid venue IDs
 func AllVenues() []VenueID {
-	return []VenueID{Polymarket, Kalshi}
+	return []VenueID{VenuePolymarket, VenueKalshi}
 }

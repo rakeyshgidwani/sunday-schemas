@@ -60,6 +60,19 @@ function generateGoTypes() {
 function generateConstantsFile(schemaFiles) {
   console.log('\n📦 Generating constants file...');
 
+  // Read actual schema IDs from JSON files
+  const schemaConstants = schemaFiles.map(f => {
+    const filePath = path.join(SCHEMAS_DIR, f);
+    const schemaContent = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const schemaId = schemaContent.properties?.schema?.const;
+    if (!schemaId) {
+      console.warn(`Warning: No schema const found in ${f}`);
+      return null;
+    }
+    const constName = schemaId.toUpperCase().replace(/\./g, '_');
+    return { constName: `Schema${constName}`, schemaId };
+  }).filter(Boolean);
+
   const constantsContent = `// Package sundayschemas provides constants and validation for Sunday platform schemas
 //
 // This file was automatically generated from JSON Schema definitions.
@@ -75,16 +88,10 @@ import (
 type EventSchema string
 
 const (
-	${schemaFiles.map(f => {
-    const baseName = f.replace('.schema.json', '');
-    const constName = baseName.toUpperCase().replace(/\./g, '_');
-    return `Schema${constName} EventSchema = "${baseName}"`;
-  }).join('\n\t')}
+	${schemaConstants.map(s => `${s.constName} EventSchema = "${s.schemaId}"`).join('\n\t')}
 )
 
-// VenueID represents supported venues
-type VenueID string
-
+// Additional venue constants (VenueID type is defined in schemas.go)
 const (
 	VenuePolymarket VenueID = "polymarket"
 	VenueKalshi     VenueID = "kalshi"
@@ -102,19 +109,15 @@ const (
 type HealthStatus string
 
 const (
-	HealthConnected HealthStatus = "connected"
-	HealthDegraded  HealthStatus = "degraded"
-	HealthStale     HealthStatus = "stale"
+	HealthConnected HealthStatus = "CONNECTED"
+	HealthDegraded  HealthStatus = "DEGRADED"
+	HealthStale     HealthStatus = "STALE"
 )
 
 // ValidateSchema checks if a schema string is valid
 func ValidateSchema(schema string) error {
 	switch EventSchema(schema) {
-	case ${schemaFiles.map(f => {
-    const baseName = f.replace('.schema.json', '');
-    const constName = baseName.toUpperCase().replace(/\./g, '_');
-    return `Schema${constName}`;
-  }).join(', ')}:
+	case ${schemaConstants.map(s => s.constName).join(', ')}:
 		return nil
 	default:
 		return fmt.Errorf("invalid schema: %s", schema)
@@ -134,11 +137,7 @@ func ValidateVenue(venue string) error {
 // AllSchemas returns all valid schema constants
 func AllSchemas() []EventSchema {
 	return []EventSchema{
-		${schemaFiles.map(f => {
-    const baseName = f.replace('.schema.json', '');
-    const constName = baseName.toUpperCase().replace(/\./g, '_');
-    return `Schema${constName}`;
-  }).join(',\n\t\t')},
+		${schemaConstants.map(s => s.constName).join(',\n\t\t')},
 	}
 }
 
