@@ -40,6 +40,8 @@
     "release:auto": "./scripts/release.sh --auto-deploy",
     "deploy:services": "./scripts/deploy-consuming-services.sh",
     "deploy:services:dry-run": "./scripts/deploy-consuming-services.sh --dry-run",
+    "backfill:go-tags": "./scripts/backfill-go-tags.sh",
+    "backfill:go-tags:dry-run": "./scripts/backfill-go-tags.sh --dry-run",
     "validate-deployment": "./scripts/validate-deployment.sh",
     "validate-deployment:quick": "./scripts/validate-deployment.sh --quick",
     "build:ts": "npm run build --workspace=@rakeyshgidwani/sunday-schemas",
