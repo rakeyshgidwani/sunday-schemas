@@ -1,6 +1,6 @@
 {
   "name": "@rakeyshgidwani/sunday-schemas",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "type": "module",
   "description": "TypeScript schemas and types for Sunday platform events and APIs",
   "keywords": ["sunday", "schemas", "typescript", "events", "api"],
