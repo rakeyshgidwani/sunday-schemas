@@ -1,0 +1,54 @@
+{
+  "$id": "https://schemas.sunday.dev/raw.categories.v0.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Raw Categories Discovery v0",
+  "description": "Category/tag discovery data for unified taxonomy from prediction market venues",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "envelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "venue_id": {
+          "type": "string",
+          "enum": ["polymarket", "kalshi"],
+          "$comment": "Venue identifier from venues.json registry"
+        },
+        "stream": {
+          "type": "string",
+          "const": "category_discovery",
+          "$comment": "Data stream type for category discovery"
+        },
+        "schema": {
+          "type": "string",
+          "const": "raw.categories.v0",
+          "$comment": "Schema identifier for this version"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "$comment": "ISO 8601 timestamp when category was processed"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "discovery_timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "$comment": "When discovery process found this category"
+            }
+          }
+        }
+      },
+      "required": ["venue_id", "stream", "schema", "timestamp"]
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true,
+      "$comment": "Raw venue-native category/tag data - preserves original API response structure"
+    }
+  },
+  "required": ["envelope", "payload"]
+}

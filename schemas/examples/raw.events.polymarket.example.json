@@ -1,0 +1,26 @@
+{
+  "envelope": {
+    "venue_id": "polymarket",
+    "stream": "event_discovery",
+    "schema": "raw.events.v0",
+    "timestamp": "2024-10-20T14:30:00Z",
+    "metadata": {
+      "discovery_timestamp": "2024-10-20T14:30:00Z",
+      "discovery_page": 1
+    }
+  },
+  "payload": {
+    "id": "event_12345",
+    "title": "2024 Presidential Election",
+    "description": "Who will win the 2024 US Presidential Election?",
+    "start_date": "2024-01-01T00:00:00Z",
+    "end_date": "2024-11-05T23:59:59Z",
+    "status": "active",
+    "category": "Politics",
+    "tags": ["politics", "election", "2024"],
+    "volume": 1500000,
+    "markets": ["market_1", "market_2"],
+    "image_url": "https://example.com/event_image.jpg",
+    "resolution_source": "AP News"
+  }
+}

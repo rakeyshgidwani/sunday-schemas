@@ -1,0 +1,19 @@
+{
+  "envelope": {
+    "venue_id": "kalshi",
+    "stream": "category_discovery",
+    "schema": "raw.categories.v0",
+    "timestamp": "2024-10-20T14:30:00Z",
+    "metadata": {
+      "discovery_timestamp": "2024-10-20T14:30:00Z"
+    }
+  },
+  "payload": {
+    "category": "Politics",
+    "event_count": 75,
+    "market_count": 200,
+    "total_volume": 3500000,
+    "subcategories": ["Elections", "Policy", "International"],
+    "derived_from": "event_aggregation"
+  }
+}

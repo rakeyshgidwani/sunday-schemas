@@ -30,5 +30,29 @@
   "infra.venue_health.v1": {
     "topic": "infra.venue_health",
     "description": "Venue connector health monitoring"
+  },
+  "raw.events.v0": {
+    "topics": [
+      "sunday.events.discovered",
+      "sunday.events.updated",
+      "sunday.events.expired"
+    ],
+    "description": "Event discovery data from prediction market venues"
+  },
+  "raw.series.v0": {
+    "topics": [
+      "sunday.series.discovered",
+      "sunday.series.updated",
+      "sunday.series.expired"
+    ],
+    "description": "Series/collections discovery data"
+  },
+  "raw.categories.v0": {
+    "topics": [
+      "sunday.categories.discovered",
+      "sunday.categories.updated",
+      "sunday.categories.expired"
+    ],
+    "description": "Category/tag discovery data for unified taxonomy"
   }
 }

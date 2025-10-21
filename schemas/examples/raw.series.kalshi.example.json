@@ -1,0 +1,22 @@
+{
+  "envelope": {
+    "venue_id": "kalshi",
+    "stream": "series_discovery",
+    "schema": "raw.series.v0",
+    "timestamp": "2024-10-20T14:30:00Z",
+    "metadata": {
+      "discovery_timestamp": "2024-10-20T14:30:00Z",
+      "discovery_page": 1
+    }
+  },
+  "payload": {
+    "series_ticker": "NFL24",
+    "title": "NFL 2024",
+    "frequency": "weekly",
+    "category": "Sports",
+    "settlement_source": "ESPN",
+    "tags": ["nfl", "sports"],
+    "event_count": 25,
+    "status": "open"
+  }
+}

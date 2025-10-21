@@ -1,0 +1,58 @@
+{
+  "$id": "https://schemas.sunday.dev/raw.series.v0.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Raw Series Discovery v0",
+  "description": "Series/collections discovery data from prediction market venues",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "envelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "venue_id": {
+          "type": "string",
+          "enum": ["polymarket", "kalshi"],
+          "$comment": "Venue identifier from venues.json registry"
+        },
+        "stream": {
+          "type": "string",
+          "const": "series_discovery",
+          "$comment": "Data stream type for series discovery"
+        },
+        "schema": {
+          "type": "string",
+          "const": "raw.series.v0",
+          "$comment": "Schema identifier for this version"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "$comment": "ISO 8601 timestamp when series was processed"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "discovery_timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "$comment": "When discovery process found this series"
+            },
+            "discovery_page": {
+              "type": "integer",
+              "$comment": "Pagination page number during discovery"
+            }
+          }
+        }
+      },
+      "required": ["venue_id", "stream", "schema", "timestamp"]
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true,
+      "$comment": "Raw venue-native series data - preserves original API response structure"
+    }
+  },
+  "required": ["envelope", "payload"]
+}

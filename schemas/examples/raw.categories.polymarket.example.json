@@ -1,0 +1,22 @@
+{
+  "envelope": {
+    "venue_id": "polymarket",
+    "stream": "category_discovery",
+    "schema": "raw.categories.v0",
+    "timestamp": "2024-10-20T14:30:00Z",
+    "metadata": {
+      "discovery_timestamp": "2024-10-20T14:30:00Z"
+    }
+  },
+  "payload": {
+    "id": "tag_politics",
+    "name": "Politics",
+    "slug": "politics",
+    "description": "Political events and elections",
+    "color": "#ff6b35",
+    "parent_category": null,
+    "subcategories": ["elections", "policy"],
+    "market_count": 150,
+    "volume": 5000000
+  }
+}
