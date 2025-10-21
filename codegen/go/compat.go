@@ -12,6 +12,20 @@ import "time"
 // Legacy type aliases for backward compatibility
 // These provide the interface that sunday-connectors expects
 
+// Stream is a compatibility alias for the generic stream type
+// Maintains backward compatibility with existing sunday-connectors code
+type Stream string
+
+// Stream constants for backward compatibility
+const (
+	StreamOrderbook         Stream = "orderbook"
+	StreamTrades           Stream = "trades"
+	StreamStatus           Stream = "status"
+	StreamEventDiscovery   Stream = "event_discovery"
+	StreamSeriesDiscovery  Stream = "series_discovery"
+	StreamCategoryDiscovery Stream = "category_discovery"
+)
+
 // RawEnvelope is a compatibility alias for RawEnvelopeV0
 // This maintains compatibility with existing code that expects the old field names
 type RawEnvelope struct {
