@@ -48,7 +48,7 @@ func (r RawEnvelope) ToRawEnvelopeV0() RawEnvelopeV0 {
 	return RawEnvelopeV0{
 		Schema:           RawV0, // Use the canonical schema constant
 		VenueID:          VenueID(r.VenueID),
-		Stream:           Stream(r.Stream),
+		Stream:           RawEnvelopeV0Stream(r.Stream),
 		InstrumentNative: r.InstrumentNative,
 		PartitionKey:     r.PartitionKey,
 		TsEventMS:        r.TsEventMs,   // Convert lowercase to uppercase
