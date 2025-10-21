@@ -22,10 +22,21 @@
 //    normalizedTradeV1, err := UnmarshalNormalizedTradeV1(bytes)
 //    bytes, err = normalizedTradeV1.Marshal()
 //
+//    rawCategoriesDiscoveryV0, err := UnmarshalRawCategoriesDiscoveryV0(bytes)
+//    bytes, err = rawCategoriesDiscoveryV0.Marshal()
+//
+//    rawEventsDiscoveryV0, err := UnmarshalRawEventsDiscoveryV0(bytes)
+//    bytes, err = rawEventsDiscoveryV0.Marshal()
+//
+//    rawSeriesDiscoveryV0, err := UnmarshalRawSeriesDiscoveryV0(bytes)
+//    bytes, err = rawSeriesDiscoveryV0.Marshal()
+//
 //    rawEnvelopeV0, err := UnmarshalRawEnvelopeV0(bytes)
 //    bytes, err = rawEnvelopeV0.Marshal()
 
 package sundayschemas
+
+import "time"
 
 import "encoding/json"
 
@@ -96,6 +107,36 @@ func UnmarshalNormalizedTradeV1(data []byte) (NormalizedTradeV1, error) {
 }
 
 func (r *NormalizedTradeV1) Marshal() ([]byte, error) {
+	return json.Marshal(r)
+}
+
+func UnmarshalRawCategoriesDiscoveryV0(data []byte) (RawCategoriesDiscoveryV0, error) {
+	var r RawCategoriesDiscoveryV0
+	err := json.Unmarshal(data, &r)
+	return r, err
+}
+
+func (r *RawCategoriesDiscoveryV0) Marshal() ([]byte, error) {
+	return json.Marshal(r)
+}
+
+func UnmarshalRawEventsDiscoveryV0(data []byte) (RawEventsDiscoveryV0, error) {
+	var r RawEventsDiscoveryV0
+	err := json.Unmarshal(data, &r)
+	return r, err
+}
+
+func (r *RawEventsDiscoveryV0) Marshal() ([]byte, error) {
+	return json.Marshal(r)
+}
+
+func UnmarshalRawSeriesDiscoveryV0(data []byte) (RawSeriesDiscoveryV0, error) {
+	var r RawSeriesDiscoveryV0
+	err := json.Unmarshal(data, &r)
+	return r, err
+}
+
+func (r *RawSeriesDiscoveryV0) Marshal() ([]byte, error) {
 	return json.Marshal(r)
 }
 
@@ -193,6 +234,62 @@ type NormalizedTradeV1 struct {
 	VenueID      VenueID                 `json:"venue_id"`
 }
 
+// Category/tag discovery data for unified taxonomy from prediction market venues
+type RawCategoriesDiscoveryV0 struct {
+	Envelope RawCategoriesDiscoveryV0Envelope `json:"envelope"`
+	Payload  map[string]interface{}           `json:"payload"`
+}
+
+type RawCategoriesDiscoveryV0Envelope struct {
+	Metadata  *PurpleMetadata `json:"metadata,omitempty"`
+	Schema    PurpleSchema    `json:"schema"`
+	Stream    PurpleStream    `json:"stream"`
+	Timestamp time.Time       `json:"timestamp"`
+	VenueID   VenueID         `json:"venue_id"`
+}
+
+type PurpleMetadata struct {
+	DiscoveryTimestamp *time.Time `json:"discovery_timestamp,omitempty"`
+}
+
+// Event discovery data from prediction market venues
+type RawEventsDiscoveryV0 struct {
+	Envelope RawEventsDiscoveryV0Envelope `json:"envelope"`
+	Payload  map[string]interface{}       `json:"payload"`
+}
+
+type RawEventsDiscoveryV0Envelope struct {
+	Metadata  *FluffyMetadata `json:"metadata,omitempty"`
+	Schema    FluffySchema    `json:"schema"`
+	Stream    FluffyStream    `json:"stream"`
+	Timestamp time.Time       `json:"timestamp"`
+	VenueID   VenueID         `json:"venue_id"`
+}
+
+type FluffyMetadata struct {
+	DiscoveryPage      *int64     `json:"discovery_page,omitempty"`
+	DiscoveryTimestamp *time.Time `json:"discovery_timestamp,omitempty"`
+}
+
+// Series/collections discovery data from prediction market venues
+type RawSeriesDiscoveryV0 struct {
+	Envelope RawSeriesDiscoveryV0Envelope `json:"envelope"`
+	Payload  map[string]interface{}       `json:"payload"`
+}
+
+type RawSeriesDiscoveryV0Envelope struct {
+	Metadata  *TentacledMetadata `json:"metadata,omitempty"`
+	Schema    TentacledSchema    `json:"schema"`
+	Stream    TentacledStream    `json:"stream"`
+	Timestamp time.Time          `json:"timestamp"`
+	VenueID   VenueID            `json:"venue_id"`
+}
+
+type TentacledMetadata struct {
+	DiscoveryPage      *int64     `json:"discovery_page,omitempty"`
+	DiscoveryTimestamp *time.Time `json:"discovery_timestamp,omitempty"`
+}
+
 // Raw venue data envelope from connectors
 type RawEnvelopeV0 struct {
 	BackfillTsMS     *int64                 `json:"backfill_ts_ms,omitempty"`
@@ -201,7 +298,7 @@ type RawEnvelopeV0 struct {
 	PartitionKey     string                 `json:"partition_key"`
 	Payload          map[string]interface{} `json:"payload"`
 	Schema           RawEnvelopeV0Schema    `json:"schema"`
-	Stream           Stream                 `json:"stream"`
+	Stream           RawEnvelopeV0Stream    `json:"stream"`
 	TsEventMS        int64                  `json:"ts_event_ms"`
 	TsIngestMS       int64                  `json:"ts_ingest_ms"`
 	VenueID          VenueID                `json:"venue_id"`
@@ -301,16 +398,52 @@ const (
 	MdTradeV1 NormalizedTradeV1Schema = "md.trade.v1"
 )
 
+type PurpleSchema string
+
+const (
+	RawCategoriesV0 PurpleSchema = "raw.categories.v0"
+)
+
+type PurpleStream string
+
+const (
+	CategoryDiscovery PurpleStream = "category_discovery"
+)
+
+type FluffySchema string
+
+const (
+	RawEventsV0 FluffySchema = "raw.events.v0"
+)
+
+type FluffyStream string
+
+const (
+	EventDiscovery FluffyStream = "event_discovery"
+)
+
+type TentacledSchema string
+
+const (
+	RawSeriesV0 TentacledSchema = "raw.series.v0"
+)
+
+type TentacledStream string
+
+const (
+	SeriesDiscovery TentacledStream = "series_discovery"
+)
+
 type RawEnvelopeV0Schema string
 
 const (
 	RawV0 RawEnvelopeV0Schema = "raw.v0"
 )
 
-type Stream string
+type RawEnvelopeV0Stream string
 
 const (
-	Orderbook Stream = "orderbook"
-	Status    Stream = "status"
-	Trades    Stream = "trades"
+	Orderbook RawEnvelopeV0Stream = "orderbook"
+	Status    RawEnvelopeV0Stream = "status"
+	Trades    RawEnvelopeV0Stream = "trades"
 )

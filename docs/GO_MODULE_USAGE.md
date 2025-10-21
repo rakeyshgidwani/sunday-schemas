@@ -46,6 +46,15 @@ schemas.UnusualActivityV1                   // Generated event type
 schemas.WhaleFlowsLiteV1                    // Generated event type
 schemas.NormalizedOrderBookDeltaV1          // Generated event type
 schemas.NormalizedTradeV1                   // Generated event type
+schemas.RawCategoriesDiscoveryV0            // Generated event type
+schemas.RawCategoriesDiscoveryV0Envelope    // Generated event type
+schemas.PurpleMetadata                      // Generated event type
+schemas.RawEventsDiscoveryV0                // Generated event type
+schemas.RawEventsDiscoveryV0Envelope        // Generated event type
+schemas.FluffyMetadata                      // Generated event type
+schemas.RawSeriesDiscoveryV0                // Generated event type
+schemas.RawSeriesDiscoveryV0Envelope        // Generated event type
+schemas.TentacledMetadata                   // Generated event type
 schemas.RawEnvelopeV0                       // Generated event type
 ```
 
@@ -86,6 +95,9 @@ schemas.UnmarshalUnusualActivityV1(data)
 schemas.UnmarshalWhaleFlowsLiteV1(data)
 schemas.UnmarshalNormalizedOrderBookDeltaV1(data)
 schemas.UnmarshalNormalizedTradeV1(data)
+schemas.UnmarshalRawCategoriesDiscoveryV0(data)
+schemas.UnmarshalRawEventsDiscoveryV0(data)
+schemas.UnmarshalRawSeriesDiscoveryV0(data)
 schemas.UnmarshalRawEnvelopeV0(data)
 ```
 
@@ -129,4 +141,4 @@ func main() {
 ---
 
 *This documentation is automatically generated from the actual Go codegen output.*
-*Last updated: 2025-10-21T13:55:04.883Z*
+*Last updated: 2025-10-21T13:57:31.770Z*
