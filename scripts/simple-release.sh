@@ -62,6 +62,11 @@ echo "🚀 Pushing to GitHub..."
 git push origin main
 git push origin "v$VERSION"
 
+# Create and push Go module tag
+echo "📦 Creating Go module tag..."
+git tag "codegen/go/v$VERSION" "v$VERSION"
+git push origin "codegen/go/v$VERSION"
+
 echo ""
 echo "✅ Release $VERSION completed!"
 echo "📋 Monitor at: https://github.com/rakeyshgidwani/sunday-schemas/actions"
