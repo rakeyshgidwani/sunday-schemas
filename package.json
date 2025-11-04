@@ -1,6 +1,6 @@
 {
   "name": "sunday-schemas",
-  "version": "1.0.15",
+  "version": "1.1.0",
   "description": "Schema registry for Sunday platform event definitions and API contracts",
   "main": "codegen/ts/index.js",
   "type": "commonjs",
@@ -18,7 +18,7 @@
     "validate": "npm run validate-schemas && npm run validate-examples",
     "lint": "npm run lint-openapi && npm run lint-json",
     "test": "npm run validate && npm run lint",
-    "generate-ts": "npx json-schema-to-typescript -i schemas/json -o codegen/ts",
+    "generate-ts": "cd schemas/json && npx json-schema-to-typescript -i . -o ../../codegen/ts",
     "generate-openapi-ts": "npx openapi-typescript openapi/ui.v1.yaml -o codegen/ts/api.ts",
     "generate-go": "node scripts/generate-go.js",
     "generate-openapi-go": "mkdir -p codegen/go/api && export PATH=$PATH:$(go env GOPATH)/bin && oapi-codegen -generate types,client -package api openapi/ui.v1.yaml > codegen/go/api/client.go",

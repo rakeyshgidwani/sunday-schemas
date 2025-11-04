@@ -6,26 +6,6 @@
  */
 
 /**
- * Series/collections discovery data from prediction market venues
- */
-export interface RawSeriesDiscoveryV0 {
-  envelope: {
-    venue_id: "polymarket" | "kalshi";
-    stream: "series_discovery";
-    schema: "raw.series.v0";
-    timestamp: string;
-    metadata?: {
-      discovery_timestamp?: string;
-      discovery_page?: number;
-    };
-  };
-  payload:
-    | SeriesDiscoveryPayloadV0
-    | {
-        [k: string]: unknown;
-      };
-}
-/**
  * Structured payload for series discovery messages
  */
 export interface SeriesDiscoveryPayloadV0 {

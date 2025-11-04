@@ -1,6 +1,21 @@
 // Code generated from JSON Schema using quicktype. DO NOT EDIT.
 // To parse and unparse this JSON data, add this code to your project and do:
 //
+//    eventMetadataV0, err := UnmarshalEventMetadataV0(bytes)
+//    bytes, err = eventMetadataV0.Marshal()
+//
+//    eventDiscoveryPayloadV0, err := UnmarshalEventDiscoveryPayloadV0(bytes)
+//    bytes, err = eventDiscoveryPayloadV0.Marshal()
+//
+//    seriesMetadataV0, err := UnmarshalSeriesMetadataV0(bytes)
+//    bytes, err = seriesMetadataV0.Marshal()
+//
+//    seriesDiscoveryPayloadV0, err := UnmarshalSeriesDiscoveryPayloadV0(bytes)
+//    bytes, err = seriesDiscoveryPayloadV0.Marshal()
+//
+//    discoverySharedTypesV0, err := UnmarshalDiscoverySharedTypesV0(bytes)
+//    bytes, err = discoverySharedTypesV0.Marshal()
+//
 //    venueHealthV1, err := UnmarshalVenueHealthV1(bytes)
 //    bytes, err = venueHealthV1.Marshal()
 //
@@ -39,6 +54,58 @@ package sundayschemas
 import "time"
 
 import "encoding/json"
+
+func UnmarshalEventMetadataV0(data []byte) (EventMetadataV0, error) {
+	var r EventMetadataV0
+	err := json.Unmarshal(data, &r)
+	return r, err
+}
+
+func (r *EventMetadataV0) Marshal() ([]byte, error) {
+	return json.Marshal(r)
+}
+
+func UnmarshalEventDiscoveryPayloadV0(data []byte) (EventDiscoveryPayloadV0, error) {
+	var r EventDiscoveryPayloadV0
+	err := json.Unmarshal(data, &r)
+	return r, err
+}
+
+func (r *EventDiscoveryPayloadV0) Marshal() ([]byte, error) {
+	return json.Marshal(r)
+}
+
+func UnmarshalSeriesMetadataV0(data []byte) (SeriesMetadataV0, error) {
+	var r SeriesMetadataV0
+	err := json.Unmarshal(data, &r)
+	return r, err
+}
+
+func (r *SeriesMetadataV0) Marshal() ([]byte, error) {
+	return json.Marshal(r)
+}
+
+func UnmarshalSeriesDiscoveryPayloadV0(data []byte) (SeriesDiscoveryPayloadV0, error) {
+	var r SeriesDiscoveryPayloadV0
+	err := json.Unmarshal(data, &r)
+	return r, err
+}
+
+func (r *SeriesDiscoveryPayloadV0) Marshal() ([]byte, error) {
+	return json.Marshal(r)
+}
+
+type DiscoverySharedTypesV0 map[string]interface{}
+
+func UnmarshalDiscoverySharedTypesV0(data []byte) (DiscoverySharedTypesV0, error) {
+	var r DiscoverySharedTypesV0
+	err := json.Unmarshal(data, &r)
+	return r, err
+}
+
+func (r *DiscoverySharedTypesV0) Marshal() ([]byte, error) {
+	return json.Marshal(r)
+}
 
 func UnmarshalVenueHealthV1(data []byte) (VenueHealthV1, error) {
 	var r VenueHealthV1
@@ -150,6 +217,274 @@ func (r *RawEnvelopeV0) Marshal() ([]byte, error) {
 	return json.Marshal(r)
 }
 
+// Structured metadata for individual prediction market events
+type EventMetadataV0 struct {
+	// Whether the event is currently active                                       
+	Active                                                  bool                   `json:"active"`
+	// Event category                                                              
+	Category                                                *string                `json:"category,omitempty"`
+	// Whether the event is closed for trading                                     
+	Closed                                                  bool                   `json:"closed"`
+	// Event description                                                           
+	Description                                             *string                `json:"description,omitempty"`
+	// When this event was first discovered                                        
+	DiscoveredAt                                            time.Time              `json:"discovered_at"`
+	// Event end date/time                                                         
+	EndDate                                                 *time.Time             `json:"end_date,omitempty"`
+	// Venue-specific event identifier                                             
+	EventID                                                 string                 `json:"event_id"`
+	// Venue-specific fields that don't fit canonical schema                       
+	ExtraMetadata                                           map[string]interface{} `json:"extra_metadata,omitempty"`
+	// Discriminator field for event metadata                                      
+	Kind                                                    EventMetadataV0Kind    `json:"kind"`
+	// When this event was last seen in discovery                                  
+	LastSeen                                                time.Time              `json:"last_seen"`
+	// Series ID this event belongs to                                             
+	ParentSeriesID                                          *string                `json:"parent_series_id,omitempty"`
+	// Series title for convenience                                                
+	ParentSeriesTitle                                       *string                `json:"parent_series_title,omitempty"`
+	Relationships                                           *Relationships         `json:"relationships,omitempty"`
+	// Event start date/time                                                       
+	StartDate                                               *time.Time             `json:"start_date,omitempty"`
+	// Structured tags for categorization                                          
+	Tags                                                    []string               `json:"tags,omitempty"`
+	// Event title                                                                 
+	Title                                                   string                 `json:"title"`
+	// Venue identifier from venues.json registry                                  
+	VenueID                                                 VenueID                `json:"venue_id"`
+}
+
+// Parent/child relationship mappings
+type Relationships struct {
+	// Child event identifiers                      
+	EventIDS                               []string `json:"event_ids,omitempty"`
+	// Related venue instrument identifiers         
+	InstrumentIDS                          []string `json:"instrument_ids,omitempty"`
+	// Parent series identifier                     
+	SeriesID                               *string  `json:"series_id,omitempty"`
+}
+
+// Structured payload for event discovery messages
+type EventDiscoveryPayloadV0 struct {
+	DiscoveryMeta                                        *Discovery `json:"discovery_meta,omitempty"`
+	Event                                                EventClass `json:"event"`
+	// Unique event identifier for this discovery message           
+	EventID                                              string     `json:"event_id"`
+	// Type of discovery event                                      
+	EventType                                            EventType  `json:"event_type"`
+	// When this discovery event occurred                           
+	Timestamp                                            time.Time  `json:"timestamp"`
+	// Venue identifier from venues.json registry                   
+	VenueID                                              VenueID    `json:"venue_id"`
+}
+
+// Metadata about the discovery batch/run for monitoring and sequencing
+type Discovery struct {
+	// Unique identifier for this discovery batch           
+	BatchID                                          string `json:"batch_id"`
+	// Position of this item within the batch               
+	BatchSequence                                    int64  `json:"batch_sequence"`
+	// Total number of items in this batch                  
+	BatchTotalCount                                  int64  `json:"batch_total_count"`
+	// Unique identifier for the entire discovery run       
+	DiscoveryRunID                                   string `json:"discovery_run_id"`
+}
+
+// Structured metadata for individual prediction market events
+type EventClass struct {
+	// Whether the event is currently active                                       
+	Active                                                  bool                   `json:"active"`
+	// Event category                                                              
+	Category                                                *string                `json:"category,omitempty"`
+	// Whether the event is closed for trading                                     
+	Closed                                                  bool                   `json:"closed"`
+	// Event description                                                           
+	Description                                             *string                `json:"description,omitempty"`
+	// When this event was first discovered                                        
+	DiscoveredAt                                            time.Time              `json:"discovered_at"`
+	// Event end date/time                                                         
+	EndDate                                                 *time.Time             `json:"end_date,omitempty"`
+	// Venue-specific event identifier                                             
+	EventID                                                 string                 `json:"event_id"`
+	// Venue-specific fields that don't fit canonical schema                       
+	ExtraMetadata                                           map[string]interface{} `json:"extra_metadata,omitempty"`
+	// Discriminator field for event metadata                                      
+	Kind                                                    EventMetadataV0Kind    `json:"kind"`
+	// When this event was last seen in discovery                                  
+	LastSeen                                                time.Time              `json:"last_seen"`
+	// Series ID this event belongs to                                             
+	ParentSeriesID                                          *string                `json:"parent_series_id,omitempty"`
+	// Series title for convenience                                                
+	ParentSeriesTitle                                       *string                `json:"parent_series_title,omitempty"`
+	Relationships                                           *Relationships         `json:"relationships,omitempty"`
+	// Event start date/time                                                       
+	StartDate                                               *time.Time             `json:"start_date,omitempty"`
+	// Structured tags for categorization                                          
+	Tags                                                    []string               `json:"tags,omitempty"`
+	// Event title                                                                 
+	Title                                                   string                 `json:"title"`
+	// Venue identifier from venues.json registry                                  
+	VenueID                                                 VenueID                `json:"venue_id"`
+}
+
+// Structured metadata for series/collections of prediction market events
+type SeriesMetadataV0 struct {
+	// Whether the series is currently active                                            
+	Active                                                        bool                   `json:"active"`
+	// Series category                                                                   
+	Category                                                      *string                `json:"category,omitempty"`
+	// Event IDs that belong to this series                                              
+	ChildEventIDS                                                 []string               `json:"child_event_ids,omitempty"`
+	// Whether the series is closed                                                      
+	Closed                                                        bool                   `json:"closed"`
+	// Series description                                                                
+	Description                                                   *string                `json:"description,omitempty"`
+	// When this series was first discovered                                             
+	DiscoveredAt                                                  time.Time              `json:"discovered_at"`
+	// Series identifier (note: field name kept for compatibility)                       
+	EventID                                                       string                 `json:"event_id"`
+	// Venue-specific fields that don't fit canonical schema                             
+	ExtraMetadata                                                 map[string]interface{} `json:"extra_metadata,omitempty"`
+	// Discriminator field for series metadata                                           
+	Kind                                                          SeriesMetadataV0Kind   `json:"kind"`
+	// When this series was last seen in discovery                                       
+	LastSeen                                                      time.Time              `json:"last_seen"`
+	Relationships                                                 *Relationships         `json:"relationships,omitempty"`
+	SeriesData                                                    *SeriesData            `json:"series_data,omitempty"`
+	// Structured tags for categorization                                                
+	Tags                                                          []string               `json:"tags,omitempty"`
+	// Series title                                                                      
+	Title                                                         string                 `json:"title"`
+	// Venue identifier from venues.json registry                                        
+	VenueID                                                       VenueID                `json:"venue_id"`
+}
+
+// Series-specific fields
+type SeriesData struct {
+	Contract                         *Contract    `json:"contract,omitempty"`
+	Creators                         *Creators    `json:"creators,omitempty"`
+	Financial                        *Financial   `json:"financial,omitempty"`
+	IconURL                          *string      `json:"icon_url,omitempty"`
+	ImageURL                         *string      `json:"image_url,omitempty"`
+	// UI layout hint                             
+	Layout                           *string      `json:"layout,omitempty"`
+	// Series recurrence pattern                  
+	Recurrence                       *string      `json:"recurrence,omitempty"`
+	// Type/classification of series              
+	SeriesType                       *string      `json:"series_type,omitempty"`
+	// URL-friendly series identifier             
+	Slug                             *string      `json:"slug,omitempty"`
+	Status                           *StatusClass `json:"status,omitempty"`
+	// Short series subtitle                      
+	Subtitle                         *string      `json:"subtitle,omitempty"`
+	// Series ticker/symbol                       
+	Ticker                           *string      `json:"ticker,omitempty"`
+	Timestamps                       *Timestamps  `json:"timestamps,omitempty"`
+}
+
+type Contract struct {
+	AdditionalProhibitions   []string                  `json:"additional_prohibitions,omitempty"`
+	ContractTermsURL         *string                   `json:"contract_terms_url,omitempty"`
+	ContractURL              *string                   `json:"contract_url,omitempty"`
+	FeeMultiplier            *float64                  `json:"fee_multiplier,omitempty"`
+	// Fee calculation method                          
+	FeeType                  *string                   `json:"fee_type,omitempty"`
+	SettlementSources        []DiscoverySharedV0Schema `json:"settlement_sources,omitempty"`
+}
+
+type DiscoverySharedV0Schema struct {
+	Name string  `json:"name"`
+	URL  *string `json:"url,omitempty"`
+}
+
+type Creators struct {
+	CreatedBy *string `json:"created_by,omitempty"`
+	UpdatedBy *string `json:"updated_by,omitempty"`
+}
+
+type Financial struct {
+	// Currency unit for monetary values                           
+	Currency                                             *Currency `json:"currency,omitempty"`
+	// Total USD liquidity, decimal precision to 2 places          
+	LiquidityTotalUsd                                    *float64  `json:"liquidity_total_usd,omitempty"`
+	// Ranking/scoring metric (unitless)                           
+	Score                                                *float64  `json:"score,omitempty"`
+	// 24-hour contract volume count                               
+	Volume24HContracts                                   *int64    `json:"volume_24h_contracts,omitempty"`
+	// 24-hour USD volume, decimal precision to 2 places           
+	Volume24HUsd                                         *float64  `json:"volume_24h_usd,omitempty"`
+	// Total contract volume count                                 
+	VolumeTotalContracts                                 *int64    `json:"volume_total_contracts,omitempty"`
+	// Total USD volume, decimal precision to 2 places             
+	VolumeTotalUsd                                       *float64  `json:"volume_total_usd,omitempty"`
+}
+
+type StatusClass struct {
+	Archived                        *bool   `json:"archived,omitempty"`
+	CommentsEnabled                 *bool   `json:"comments_enabled,omitempty"`
+	// Competitive mode/flag                
+	Competitive                     *string `json:"competitive,omitempty"`
+	Featured                        *bool   `json:"featured,omitempty"`
+	// Newly featured series                
+	IsNew                           *bool   `json:"is_new,omitempty"`
+	// Template for event generation        
+	IsTemplate                      *bool   `json:"is_template,omitempty"`
+	// Access restrictions apply            
+	Restricted                      *bool   `json:"restricted,omitempty"`
+}
+
+type Timestamps struct {
+	CreatedAt   *time.Time `json:"created_at,omitempty"`
+	PublishedAt *time.Time `json:"published_at,omitempty"`
+	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
+}
+
+// Structured payload for series discovery messages
+type SeriesDiscoveryPayloadV0 struct {
+	DiscoveryMeta                                        *Discovery                    `json:"discovery_meta,omitempty"`
+	Event                                                SeriesDiscoveryPayloadV0Event `json:"event"`
+	// Unique event identifier for this discovery message                              
+	EventID                                              string                        `json:"event_id"`
+	// Type of discovery event                                                         
+	EventType                                            EventType                     `json:"event_type"`
+	// When this discovery event occurred                                              
+	Timestamp                                            time.Time                     `json:"timestamp"`
+	// Venue identifier from venues.json registry                                      
+	VenueID                                              VenueID                       `json:"venue_id"`
+}
+
+// Structured metadata for series/collections of prediction market events
+type SeriesDiscoveryPayloadV0Event struct {
+	// Whether the series is currently active                                            
+	Active                                                        bool                   `json:"active"`
+	// Series category                                                                   
+	Category                                                      *string                `json:"category,omitempty"`
+	// Event IDs that belong to this series                                              
+	ChildEventIDS                                                 []string               `json:"child_event_ids,omitempty"`
+	// Whether the series is closed                                                      
+	Closed                                                        bool                   `json:"closed"`
+	// Series description                                                                
+	Description                                                   *string                `json:"description,omitempty"`
+	// When this series was first discovered                                             
+	DiscoveredAt                                                  time.Time              `json:"discovered_at"`
+	// Series identifier (note: field name kept for compatibility)                       
+	EventID                                                       string                 `json:"event_id"`
+	// Venue-specific fields that don't fit canonical schema                             
+	ExtraMetadata                                                 map[string]interface{} `json:"extra_metadata,omitempty"`
+	// Discriminator field for series metadata                                           
+	Kind                                                          SeriesMetadataV0Kind   `json:"kind"`
+	// When this series was last seen in discovery                                       
+	LastSeen                                                      time.Time              `json:"last_seen"`
+	Relationships                                                 *Relationships         `json:"relationships,omitempty"`
+	SeriesData                                                    *SeriesData            `json:"series_data,omitempty"`
+	// Structured tags for categorization                                                
+	Tags                                                          []string               `json:"tags,omitempty"`
+	// Series title                                                                      
+	Title                                                         string                 `json:"title"`
+	// Venue identifier from venues.json registry                                        
+	VenueID                                                       VenueID                `json:"venue_id"`
+}
+
 // Venue connector health monitoring
 type VenueHealthV1 struct {
 	LastEventTsMS     int64               `json:"last_event_ts_ms"`
@@ -255,7 +590,7 @@ type PurpleMetadata struct {
 // Event discovery data from prediction market venues
 type RawEventsDiscoveryV0 struct {
 	Envelope RawEventsDiscoveryV0Envelope `json:"envelope"`
-	Payload  map[string]interface{}       `json:"payload"`
+	Payload  PayloadClass                 `json:"payload"`
 }
 
 type RawEventsDiscoveryV0Envelope struct {
@@ -271,10 +606,24 @@ type FluffyMetadata struct {
 	DiscoveryTimestamp *time.Time `json:"discovery_timestamp,omitempty"`
 }
 
+// Structured payload for event discovery messages
+type PayloadClass struct {
+	DiscoveryMeta                                        *Discovery  `json:"discovery_meta,omitempty"`
+	Event                                                *EventClass `json:"event,omitempty"`
+	// Unique event identifier for this discovery message            
+	EventID                                              *string     `json:"event_id,omitempty"`
+	// Type of discovery event                                       
+	EventType                                            *EventType  `json:"event_type,omitempty"`
+	// When this discovery event occurred                            
+	Timestamp                                            *time.Time  `json:"timestamp,omitempty"`
+	// Venue identifier from venues.json registry                    
+	VenueID                                              *VenueID    `json:"venue_id,omitempty"`
+}
+
 // Series/collections discovery data from prediction market venues
 type RawSeriesDiscoveryV0 struct {
 	Envelope RawSeriesDiscoveryV0Envelope `json:"envelope"`
-	Payload  map[string]interface{}       `json:"payload"`
+	Payload  RawSeriesDiscoveryV0Payload  `json:"payload"`
 }
 
 type RawSeriesDiscoveryV0Envelope struct {
@@ -288,6 +637,20 @@ type RawSeriesDiscoveryV0Envelope struct {
 type TentacledMetadata struct {
 	DiscoveryPage      *int64     `json:"discovery_page,omitempty"`
 	DiscoveryTimestamp *time.Time `json:"discovery_timestamp,omitempty"`
+}
+
+// Structured payload for series discovery messages
+type RawSeriesDiscoveryV0Payload struct {
+	DiscoveryMeta                                        *Discovery                     `json:"discovery_meta,omitempty"`
+	Event                                                *SeriesDiscoveryPayloadV0Event `json:"event,omitempty"`
+	// Unique event identifier for this discovery message                               
+	EventID                                              *string                        `json:"event_id,omitempty"`
+	// Type of discovery event                                                          
+	EventType                                            *EventType                     `json:"event_type,omitempty"`
+	// When this discovery event occurred                                               
+	Timestamp                                            *time.Time                     `json:"timestamp,omitempty"`
+	// Venue identifier from venues.json registry                                       
+	VenueID                                              *VenueID                       `json:"venue_id,omitempty"`
 }
 
 // Raw venue data envelope from connectors
@@ -304,6 +667,42 @@ type RawEnvelopeV0 struct {
 	VenueID          VenueID                `json:"venue_id"`
 }
 
+type EventMetadataV0Kind string
+
+const (
+	Event EventMetadataV0Kind = "event"
+)
+
+// Venue identifier from venues.json registry
+type VenueID string
+
+const (
+	Kalshi     VenueID = "kalshi"
+	Polymarket VenueID = "polymarket"
+)
+
+// Type of discovery event
+type EventType string
+
+const (
+	Discovered EventType = "discovered"
+	Expired    EventType = "expired"
+	Updated    EventType = "updated"
+)
+
+type SeriesMetadataV0Kind string
+
+const (
+	Series SeriesMetadataV0Kind = "series"
+)
+
+// Currency unit for monetary values
+type Currency string
+
+const (
+	Usd Currency = "USD"
+)
+
 type VenueHealthV1Schema string
 
 const (
@@ -316,13 +715,6 @@ const (
 	Connected StatusEnum = "CONNECTED"
 	Degraded  StatusEnum = "DEGRADED"
 	Stale     StatusEnum = "STALE"
-)
-
-type VenueID string
-
-const (
-	Kalshi     VenueID = "kalshi"
-	Polymarket VenueID = "polymarket"
 )
 
 type DepthTier string

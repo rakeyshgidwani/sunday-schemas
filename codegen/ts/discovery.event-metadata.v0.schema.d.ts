@@ -6,49 +6,6 @@
  */
 
 /**
- * Event discovery data from prediction market venues
- */
-export interface RawEventsDiscoveryV0 {
-  envelope: {
-    venue_id: "polymarket" | "kalshi";
-    stream: "event_discovery";
-    schema: "raw.events.v0";
-    timestamp: string;
-    metadata?: {
-      discovery_timestamp?: string;
-      discovery_page?: number;
-    };
-  };
-  payload:
-    | EventDiscoveryPayloadV0
-    | {
-        [k: string]: unknown;
-      };
-}
-/**
- * Structured payload for event discovery messages
- */
-export interface EventDiscoveryPayloadV0 {
-  event: EventMetadataV0;
-  /**
-   * Unique event identifier for this discovery message
-   */
-  event_id: string;
-  /**
-   * Type of discovery event
-   */
-  event_type: "discovered" | "updated" | "expired";
-  /**
-   * When this discovery event occurred
-   */
-  timestamp: string;
-  /**
-   * Venue identifier from venues.json registry
-   */
-  venue_id: "polymarket" | "kalshi";
-  discovery_meta?: DiscoveryMetaV0;
-}
-/**
  * Structured metadata for individual prediction market events
  */
 export interface EventMetadataV0 {
@@ -136,25 +93,4 @@ export interface RelationshipsV0 {
    * Related venue instrument identifiers
    */
   instrument_ids?: string[];
-}
-/**
- * Metadata about the discovery batch/run for monitoring and sequencing
- */
-export interface DiscoveryMetaV0 {
-  /**
-   * Unique identifier for this discovery batch
-   */
-  batch_id: string;
-  /**
-   * Position of this item within the batch
-   */
-  batch_sequence: number;
-  /**
-   * Total number of items in this batch
-   */
-  batch_total_count: number;
-  /**
-   * Unique identifier for the entire discovery run
-   */
-  discovery_run_id: string;
 }

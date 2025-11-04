@@ -39,6 +39,21 @@ go mod tidy
 
 **Event Types:**
 ```go
+schemas.EventMetadataV0                     // Generated event type
+schemas.Relationships                       // Generated event type
+schemas.EventDiscoveryPayloadV0             // Generated event type
+schemas.Discovery                           // Generated event type
+schemas.EventClass                          // Generated event type
+schemas.SeriesMetadataV0                    // Generated event type
+schemas.SeriesData                          // Generated event type
+schemas.Contract                            // Generated event type
+schemas.DiscoverySharedV0Schema             // Generated event type
+schemas.Creators                            // Generated event type
+schemas.Financial                           // Generated event type
+schemas.StatusClass                         // Generated event type
+schemas.Timestamps                          // Generated event type
+schemas.SeriesDiscoveryPayloadV0            // Generated event type
+schemas.SeriesDiscoveryPayloadV0Event       // Generated event type
 schemas.VenueHealthV1                       // Generated event type
 schemas.ArbitrageLiteV1                     // Generated event type
 schemas.MoversV1                            // Generated event type
@@ -52,9 +67,11 @@ schemas.PurpleMetadata                      // Generated event type
 schemas.RawEventsDiscoveryV0                // Generated event type
 schemas.RawEventsDiscoveryV0Envelope        // Generated event type
 schemas.FluffyMetadata                      // Generated event type
+schemas.PayloadClass                        // Generated event type
 schemas.RawSeriesDiscoveryV0                // Generated event type
 schemas.RawSeriesDiscoveryV0Envelope        // Generated event type
 schemas.TentacledMetadata                   // Generated event type
+schemas.RawSeriesDiscoveryV0Payload         // Generated event type
 schemas.RawEnvelopeV0                       // Generated event type
 ```
 
@@ -88,6 +105,11 @@ schemas.AllVenues()
 
 **JSON Marshal/Unmarshal Functions:**
 ```go
+schemas.UnmarshalEventMetadataV0(data)
+schemas.UnmarshalEventDiscoveryPayloadV0(data)
+schemas.UnmarshalSeriesMetadataV0(data)
+schemas.UnmarshalSeriesDiscoveryPayloadV0(data)
+schemas.UnmarshalDiscoverySharedTypesV0(data)
 schemas.UnmarshalVenueHealthV1(data)
 schemas.UnmarshalArbitrageLiteV1(data)
 schemas.UnmarshalMoversV1(data)
@@ -141,4 +163,4 @@ func main() {
 ---
 
 *This documentation is automatically generated from the actual Go codegen output.*
-*Last updated: 2025-11-04T22:11:56.863Z*
+*Last updated: 2025-11-04T22:17:16.907Z*
