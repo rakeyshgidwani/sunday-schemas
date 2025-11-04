@@ -240,6 +240,7 @@ log_step "3" "Version bump and changelog update"
 
 if [ "$DRY_RUN" = true ]; then
     echo "Would update package.json version to $VERSION"
+    echo "Would synchronize workspace package versions to $VERSION"
     echo "Would update CHANGELOG.md with release date"
 else
     # Check current version in package.json
@@ -251,6 +252,27 @@ else
         # Update package.json version
         npm version $VERSION --no-git-tag-version
         log_success "Updated package.json to version $VERSION"
+    fi
+
+    # Sync workspace package versions
+    log_info "Synchronizing workspace package versions..."
+    workspace_packages=$(find packages -name "package.json" 2>/dev/null)
+    if [ -n "$workspace_packages" ]; then
+        for package_file in $workspace_packages; do
+            current_ws_version=$(node -p "require('./$package_file').version")
+            if [ "$current_ws_version" != "$VERSION" ]; then
+                # Update workspace package version using jq or node
+                node -e "
+                    const fs = require('fs');
+                    const pkg = JSON.parse(fs.readFileSync('$package_file', 'utf8'));
+                    pkg.version = '$VERSION';
+                    fs.writeFileSync('$package_file', JSON.stringify(pkg, null, 2) + '\n');
+                "
+                log_success "Updated $package_file version from $current_ws_version to $VERSION"
+            else
+                log_info "$package_file already at version $VERSION"
+            fi
+        done
     fi
 
     # Update CHANGELOG.md with release date
