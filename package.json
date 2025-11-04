@@ -1,6 +1,6 @@
 {
   "name": "sunday-schemas",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Schema registry for Sunday platform event definitions and API contracts",
   "main": "codegen/ts/index.js",
   "type": "commonjs",

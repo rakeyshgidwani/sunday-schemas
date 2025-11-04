@@ -28,7 +28,7 @@
     "access": "public"
   },
   "scripts": {
-    "gen:events": "npx json-schema-to-typescript \"../../schemas/json/**/*.json\" --cwd ../.. --outDir packages/ts/src/events",
+    "gen:events": "cd ../../schemas/json && npx json-schema-to-typescript -i . -o ../../packages/ts/src/events",
     "gen:openapi": "npx openapi-typescript ../../openapi/ui.v1.yaml -o src/ui/index.d.ts",
     "build": "npm run gen:events && npm run gen:openapi && node ../../scripts/rollup-ts-index.mjs",
     "verify:versions": "node ../../scripts/check-version-matches-tag.mjs",
