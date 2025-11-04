@@ -1,0 +1,88 @@
+{
+  "$id": "https://schemas.sunday.dev/discovery.event-metadata.v0.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Event Metadata v0",
+  "description": "Structured metadata for individual prediction market events",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "event",
+      "description": "Discriminator field for event metadata"
+    },
+    "venue_id": {
+      "type": "string",
+      "enum": ["polymarket", "kalshi"],
+      "description": "Venue identifier from venues.json registry"
+    },
+    "event_id": {
+      "type": "string",
+      "description": "Venue-specific event identifier"
+    },
+    "title": {
+      "type": "string",
+      "description": "Event title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Event description"
+    },
+    "category": {
+      "type": "string",
+      "description": "Event category"
+    },
+    "active": {
+      "type": "boolean",
+      "description": "Whether the event is currently active"
+    },
+    "closed": {
+      "type": "boolean",
+      "description": "Whether the event is closed for trading"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event start date/time"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event end date/time"
+    },
+    "discovered_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this event was first discovered"
+    },
+    "last_seen": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this event was last seen in discovery"
+    },
+    "parent_series_id": {
+      "type": "string",
+      "description": "Series ID this event belongs to"
+    },
+    "parent_series_title": {
+      "type": "string",
+      "description": "Series title for convenience"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Structured tags for categorization"
+    },
+    "relationships": {
+      "$ref": "discovery.shared.v0.schema.json#/$defs/RelationshipsV0"
+    },
+    "extra_metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Venue-specific fields that don't fit canonical schema"
+    }
+  },
+  "required": ["kind", "venue_id", "event_id", "title", "active", "closed", "discovered_at", "last_seen"]
+}

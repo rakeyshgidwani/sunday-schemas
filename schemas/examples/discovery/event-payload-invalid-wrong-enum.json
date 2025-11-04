@@ -1,0 +1,16 @@
+{
+  "event": {
+    "kind": "event",
+    "venue_id": "invalid_venue",
+    "event_id": "123456",
+    "title": "Test Event",
+    "active": true,
+    "closed": false,
+    "discovered_at": "2025-11-04T10:00:00Z",
+    "last_seen": "2025-11-04T12:00:00Z"
+  },
+  "event_id": "evt_1762203892042327000_0",
+  "event_type": "invalid_type",
+  "timestamp": "2025-11-04T12:00:00Z",
+  "venue_id": "invalid_venue"
+}

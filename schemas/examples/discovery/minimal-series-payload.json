@@ -1,0 +1,16 @@
+{
+  "event": {
+    "kind": "series",
+    "venue_id": "polymarket",
+    "event_id": "MIN-SERIES",
+    "title": "Minimal Series",
+    "active": false,
+    "closed": true,
+    "discovered_at": "2025-11-04T10:00:00Z",
+    "last_seen": "2025-11-04T10:00:00Z"
+  },
+  "event_id": "evt_series_minimal",
+  "event_type": "expired",
+  "timestamp": "2025-11-04T10:00:00Z",
+  "venue_id": "polymarket"
+}

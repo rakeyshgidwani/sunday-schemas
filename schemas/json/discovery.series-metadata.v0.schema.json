@@ -1,0 +1,80 @@
+{
+  "$id": "https://schemas.sunday.dev/discovery.series-metadata.v0.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Series Metadata v0",
+  "description": "Structured metadata for series/collections of prediction market events",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "series",
+      "description": "Discriminator field for series metadata"
+    },
+    "venue_id": {
+      "type": "string",
+      "enum": ["polymarket", "kalshi"],
+      "description": "Venue identifier from venues.json registry"
+    },
+    "event_id": {
+      "type": "string",
+      "description": "Series identifier (note: field name kept for compatibility)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Series title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Series description"
+    },
+    "category": {
+      "type": "string",
+      "description": "Series category"
+    },
+    "active": {
+      "type": "boolean",
+      "description": "Whether the series is currently active"
+    },
+    "closed": {
+      "type": "boolean",
+      "description": "Whether the series is closed"
+    },
+    "discovered_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this series was first discovered"
+    },
+    "last_seen": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this series was last seen in discovery"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Structured tags for categorization"
+    },
+    "child_event_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Event IDs that belong to this series"
+    },
+    "relationships": {
+      "$ref": "discovery.shared.v0.schema.json#/$defs/RelationshipsV0"
+    },
+    "series_data": {
+      "$ref": "discovery.shared.v0.schema.json#/$defs/SeriesDataV0"
+    },
+    "extra_metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Venue-specific fields that don't fit canonical schema"
+    }
+  },
+  "required": ["kind", "venue_id", "event_id", "title", "active", "closed", "discovered_at", "last_seen"]
+}

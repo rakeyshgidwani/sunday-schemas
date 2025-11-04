@@ -1,0 +1,60 @@
+{
+  "event": {
+    "kind": "series",
+    "venue_id": "kalshi",
+    "event_id": "PRES24",
+    "title": "2024 Presidential Election",
+    "description": "Series of markets related to the 2024 US Presidential Election",
+    "category": "Politics",
+    "active": true,
+    "closed": false,
+    "discovered_at": "2025-11-04T09:00:00Z",
+    "last_seen": "2025-11-04T12:00:00Z",
+    "tags": ["politics", "election", "president", "2024"],
+    "child_event_ids": ["PRES24-DEM-WIN", "PRES24-REP-WIN", "PRES24-TURNOUT"],
+    "relationships": {
+      "event_ids": ["PRES24-DEM-WIN", "PRES24-REP-WIN", "PRES24-TURNOUT"]
+    },
+    "series_data": {
+      "ticker": "PRES24",
+      "series_type": "political",
+      "recurrence": "quadrennial",
+      "contract": {
+        "contract_url": "https://kalshi.com/markets/PRES24",
+        "contract_terms_url": "https://kalshi.com/terms/PRES24",
+        "fee_type": "percentage",
+        "fee_multiplier": 0.02,
+        "additional_prohibitions": ["insider_trading", "market_manipulation"],
+        "settlement_sources": [
+          {
+            "name": "Associated Press",
+            "url": "https://www.ap.org"
+          },
+          {
+            "name": "Federal Election Commission"
+          }
+        ]
+      },
+      "timestamps": {
+        "published_at": "2024-01-01T00:00:00Z",
+        "created_at": "2023-11-01T00:00:00Z",
+        "updated_at": "2025-11-04T11:30:00Z"
+      }
+    },
+    "extra_metadata": {
+      "kalshi_series_id": "PRES24",
+      "compliance_reviewed": true,
+      "regulatory_approval": "CFTC_approved"
+    }
+  },
+  "event_id": "evt_series_kalshi_1762203892042328000_1",
+  "event_type": "updated",
+  "timestamp": "2025-11-04T12:00:00Z",
+  "venue_id": "kalshi",
+  "discovery_meta": {
+    "batch_id": "batch_kalshi_20251104_001",
+    "batch_sequence": 5,
+    "batch_total_count": 15,
+    "discovery_run_id": "run_kalshi_20251104_midday"
+  }
+}

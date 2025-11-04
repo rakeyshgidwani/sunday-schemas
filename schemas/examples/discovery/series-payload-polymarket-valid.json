@@ -1,0 +1,71 @@
+{
+  "event": {
+    "kind": "series",
+    "venue_id": "polymarket",
+    "event_id": "10244",
+    "title": "2024 Election Markets",
+    "description": "Collection of prediction markets for the 2024 election cycle",
+    "category": "Politics",
+    "active": true,
+    "closed": false,
+    "discovered_at": "2025-11-04T09:00:00Z",
+    "last_seen": "2025-11-04T12:00:00Z",
+    "tags": ["politics", "election", "2024", "series"],
+    "child_event_ids": ["123456", "123457", "123458"],
+    "relationships": {
+      "event_ids": ["123456", "123457", "123458"],
+      "instrument_ids": ["various_instruments"]
+    },
+    "series_data": {
+      "ticker": "ELECTION2024",
+      "slug": "election-2024-markets",
+      "subtitle": "Presidential Election Prediction Markets",
+      "series_type": "election",
+      "recurrence": "quadrennial",
+      "image_url": "https://example.com/election2024.jpg",
+      "icon_url": "https://example.com/election_icon.png",
+      "layout": "grid",
+      "financial": {
+        "volume_24h_usd": 125000.50,
+        "volume_total_usd": 2500000.75,
+        "liquidity_total_usd": 750000.25,
+        "volume_24h_contracts": 1250,
+        "volume_total_contracts": 25000,
+        "score": 85.5,
+        "currency": "USD"
+      },
+      "status": {
+        "archived": false,
+        "is_new": false,
+        "featured": true,
+        "restricted": false,
+        "is_template": false,
+        "competitive": "high",
+        "comments_enabled": true
+      },
+      "timestamps": {
+        "published_at": "2024-01-01T00:00:00Z",
+        "created_at": "2023-12-01T00:00:00Z",
+        "updated_at": "2025-11-04T11:00:00Z"
+      },
+      "creators": {
+        "created_by": "system",
+        "updated_by": "admin"
+      }
+    },
+    "extra_metadata": {
+      "polymarket_series_type": "political",
+      "featured_order": 1
+    }
+  },
+  "event_id": "evt_series_1762203892042327000_0",
+  "event_type": "discovered",
+  "timestamp": "2025-11-04T12:00:00Z",
+  "venue_id": "polymarket",
+  "discovery_meta": {
+    "batch_id": "batch_20251104_series_001",
+    "batch_sequence": 2,
+    "batch_total_count": 10,
+    "discovery_run_id": "run_20251104_series_morning"
+  }
+}

@@ -49,9 +49,17 @@
       "required": ["venue_id", "stream", "schema", "timestamp"]
     },
     "payload": {
-      "type": "object",
-      "additionalProperties": true,
-      "$comment": "Raw venue-native series data - preserves original API response structure"
+      "oneOf": [
+        {
+          "$ref": "discovery.series-payload.v0.schema.json",
+          "$comment": "Structured discovery payload (preferred)"
+        },
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "$comment": "Raw venue-native series data - preserves original API response structure (legacy)"
+        }
+      ]
     }
   },
   "required": ["envelope", "payload"]

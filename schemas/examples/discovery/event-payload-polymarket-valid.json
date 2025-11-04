@@ -1,0 +1,37 @@
+{
+  "event": {
+    "kind": "event",
+    "venue_id": "polymarket",
+    "event_id": "123456",
+    "title": "Will candidate X win the 2024 election?",
+    "description": "Prediction market for the 2024 presidential election outcome",
+    "category": "Politics",
+    "active": true,
+    "closed": false,
+    "start_date": "2024-01-01T00:00:00Z",
+    "end_date": "2024-11-30T23:59:59Z",
+    "discovered_at": "2025-11-04T10:00:00Z",
+    "last_seen": "2025-11-04T12:00:00Z",
+    "parent_series_id": "election-2024",
+    "parent_series_title": "2024 Election Markets",
+    "tags": ["politics", "election", "2024"],
+    "relationships": {
+      "series_id": "election-2024",
+      "instrument_ids": ["inst_123456_yes", "inst_123456_no"]
+    },
+    "extra_metadata": {
+      "polymarket_specific_field": "some_value",
+      "creation_timestamp": "2024-01-01T00:00:00Z"
+    }
+  },
+  "event_id": "evt_1762203892042327000_0",
+  "event_type": "discovered",
+  "timestamp": "2025-11-04T12:00:00Z",
+  "venue_id": "polymarket",
+  "discovery_meta": {
+    "batch_id": "batch_20251104_001",
+    "batch_sequence": 1,
+    "batch_total_count": 50,
+    "discovery_run_id": "run_20251104_morning"
+  }
+}

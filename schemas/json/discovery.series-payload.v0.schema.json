@@ -1,0 +1,36 @@
+{
+  "$id": "https://schemas.sunday.dev/discovery.series-payload.v0.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Series Discovery Payload v0",
+  "description": "Structured payload for series discovery messages",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "event": {
+      "$ref": "discovery.series-metadata.v0.schema.json"
+    },
+    "event_id": {
+      "type": "string",
+      "description": "Unique event identifier for this discovery message"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": ["discovered", "updated", "expired"],
+      "description": "Type of discovery event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this discovery event occurred"
+    },
+    "venue_id": {
+      "type": "string",
+      "enum": ["polymarket", "kalshi"],
+      "description": "Venue identifier from venues.json registry"
+    },
+    "discovery_meta": {
+      "$ref": "discovery.shared.v0.schema.json#/$defs/DiscoveryMetaV0"
+    }
+  },
+  "required": ["event", "event_id", "event_type", "timestamp", "venue_id"]
+}

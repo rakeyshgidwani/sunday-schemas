@@ -1,0 +1,267 @@
+{
+  "$id": "https://schemas.sunday.dev/discovery.shared.v0.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Discovery Shared Types v0",
+  "description": "Shared data structures for discovery payload schemas",
+  "type": "object",
+  "properties": {},
+  "$defs": {
+    "DiscoveryMetaV0": {
+      "type": "object",
+      "description": "Metadata about the discovery batch/run for monitoring and sequencing",
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "type": "string",
+          "description": "Unique identifier for this discovery batch"
+        },
+        "batch_sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Position of this item within the batch"
+        },
+        "batch_total_count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Total number of items in this batch"
+        },
+        "discovery_run_id": {
+          "type": "string",
+          "description": "Unique identifier for the entire discovery run"
+        }
+      },
+      "required": ["batch_id", "batch_sequence", "batch_total_count", "discovery_run_id"]
+    },
+    "RelationshipsV0": {
+      "type": "object",
+      "description": "Parent/child relationship mappings",
+      "additionalProperties": false,
+      "properties": {
+        "series_id": {
+          "type": "string",
+          "description": "Parent series identifier"
+        },
+        "event_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Child event identifiers"
+        },
+        "instrument_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Related venue instrument identifiers"
+        }
+      }
+    },
+    "FinancialDataV0": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "volume_24h_usd": {
+          "type": "number",
+          "multipleOf": 0.01,
+          "minimum": 0,
+          "description": "24-hour USD volume, decimal precision to 2 places"
+        },
+        "volume_total_usd": {
+          "type": "number",
+          "multipleOf": 0.01,
+          "minimum": 0,
+          "description": "Total USD volume, decimal precision to 2 places"
+        },
+        "liquidity_total_usd": {
+          "type": "number",
+          "multipleOf": 0.01,
+          "minimum": 0,
+          "description": "Total USD liquidity, decimal precision to 2 places"
+        },
+        "volume_24h_contracts": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "24-hour contract volume count"
+        },
+        "volume_total_contracts": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total contract volume count"
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Ranking/scoring metric (unitless)"
+        },
+        "currency": {
+          "type": "string",
+          "enum": ["USD"],
+          "description": "Currency unit for monetary values"
+        }
+      }
+    },
+    "StatusDataV0": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "archived": {
+          "type": "boolean"
+        },
+        "is_new": {
+          "type": "boolean",
+          "description": "Newly featured series"
+        },
+        "featured": {
+          "type": "boolean"
+        },
+        "restricted": {
+          "type": "boolean",
+          "description": "Access restrictions apply"
+        },
+        "is_template": {
+          "type": "boolean",
+          "description": "Template for event generation"
+        },
+        "competitive": {
+          "type": "string",
+          "description": "Competitive mode/flag"
+        },
+        "comments_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ContractDataV0": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "contract_terms_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "fee_type": {
+          "type": "string",
+          "description": "Fee calculation method"
+        },
+        "fee_multiplier": {
+          "type": "number"
+        },
+        "additional_prohibitions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "settlement_sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SettlementSourceV0"
+          }
+        }
+      }
+    },
+    "SettlementSourceV0": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": ["name"]
+    },
+    "TimestampDataV0": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "published_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "CreatorDataV0": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "created_by": {
+          "type": "string"
+        },
+        "updated_by": {
+          "type": "string"
+        }
+      }
+    },
+    "SeriesDataV0": {
+      "type": "object",
+      "description": "Series-specific fields",
+      "additionalProperties": false,
+      "properties": {
+        "ticker": {
+          "type": "string",
+          "description": "Series ticker/symbol"
+        },
+        "slug": {
+          "type": "string",
+          "description": "URL-friendly series identifier"
+        },
+        "subtitle": {
+          "type": "string",
+          "description": "Short series subtitle"
+        },
+        "series_type": {
+          "type": "string",
+          "description": "Type/classification of series"
+        },
+        "recurrence": {
+          "type": "string",
+          "description": "Series recurrence pattern"
+        },
+        "image_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "icon_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "layout": {
+          "type": "string",
+          "description": "UI layout hint"
+        },
+        "financial": {
+          "$ref": "#/$defs/FinancialDataV0"
+        },
+        "status": {
+          "$ref": "#/$defs/StatusDataV0"
+        },
+        "contract": {
+          "$ref": "#/$defs/ContractDataV0"
+        },
+        "timestamps": {
+          "$ref": "#/$defs/TimestampDataV0"
+        },
+        "creators": {
+          "$ref": "#/$defs/CreatorDataV0"
+        }
+      }
+    }
+  }
+}

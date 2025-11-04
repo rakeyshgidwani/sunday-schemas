@@ -1,0 +1,29 @@
+{
+  "event": {
+    "kind": "event",
+    "venue_id": "kalshi",
+    "event_id": "PRES24-DEM-WIN",
+    "title": "Will the Democratic candidate win the 2024 presidential election?",
+    "description": "Binary outcome market for Democratic party victory",
+    "category": "Politics",
+    "active": true,
+    "closed": false,
+    "start_date": "2024-01-01T00:00:00Z",
+    "end_date": "2024-11-30T23:59:59Z",
+    "discovered_at": "2025-11-04T10:00:00Z",
+    "last_seen": "2025-11-04T12:00:00Z",
+    "tags": ["politics", "election", "democrat"],
+    "relationships": {
+      "series_id": "PRES24-SERIES",
+      "instrument_ids": ["PRES24-DEM-WIN-YES", "PRES24-DEM-WIN-NO"]
+    },
+    "extra_metadata": {
+      "kalshi_contract_id": "PRES24-DEM-WIN",
+      "resolution_source": "Associated Press"
+    }
+  },
+  "event_id": "evt_1762203892042328000_1",
+  "event_type": "updated",
+  "timestamp": "2025-11-04T12:00:00Z",
+  "venue_id": "kalshi"
+}
