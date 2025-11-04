@@ -144,10 +144,9 @@ if [[ ! $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$ ]]; then
     exit 1
 fi
 
-# Check if version already exists
+# Check if version already exists (warning only - don't exit)
 if git tag -l | grep -q "^v$VERSION$"; then
-    log_error "Version $VERSION already exists as a git tag"
-    exit 1
+    log_warning "Version $VERSION already exists as a git tag - release script will be rerunnable"
 fi
 
 echo ""
@@ -243,9 +242,16 @@ if [ "$DRY_RUN" = true ]; then
     echo "Would update package.json version to $VERSION"
     echo "Would update CHANGELOG.md with release date"
 else
-    # Update package.json version
-    npm version $VERSION --no-git-tag-version
-    log_success "Updated package.json to version $VERSION"
+    # Check current version in package.json
+    current_version=$(node -p "require('./package.json').version")
+
+    if [ "$current_version" = "$VERSION" ]; then
+        log_warning "Package.json is already at version $VERSION - skipping version bump"
+    else
+        # Update package.json version
+        npm version $VERSION --no-git-tag-version
+        log_success "Updated package.json to version $VERSION"
+    fi
 
     # Update CHANGELOG.md with release date
     today=$(date +%Y-%m-%d)
@@ -287,21 +293,43 @@ if [ "$DRY_RUN" = true ]; then
     echo "Would commit version bump and generated code"
     echo "Would create tags: v$VERSION, codegen/go/v$VERSION"
 else
-    # Commit version bump and generated code
+    # Commit version bump and generated code (only if there are changes)
     git add .
-    git commit -m "Release version $VERSION
+    if [ -n "$(git diff --cached)" ]; then
+        git commit -m "Release version $VERSION
 
 Updated package.json, CHANGELOG.md, and regenerated all code artifacts.
 
 🚀 Generated with [Claude Code](https://claude.ai/code)
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
+        log_success "Committed version bump and generated code"
+    else
+        log_warning "No changes to commit - skipping commit step"
+    fi
 
-    # Create tags
-    git tag "v$VERSION" -m "Release v$VERSION"
-    git tag "codegen/go/v$VERSION" -m "Go module release v$VERSION"
+    # Create tags (check if they exist first)
+    created_tags=()
 
-    log_success "Created tags: v$VERSION, codegen/go/v$VERSION"
+    if git tag -l | grep -q "^v$VERSION$"; then
+        log_warning "Tag v$VERSION already exists - skipping creation"
+    else
+        git tag "v$VERSION" -m "Release v$VERSION"
+        created_tags+=("v$VERSION")
+    fi
+
+    if git tag -l | grep -q "^codegen/go/v$VERSION$"; then
+        log_warning "Tag codegen/go/v$VERSION already exists - skipping creation"
+    else
+        git tag "codegen/go/v$VERSION" -m "Go module release v$VERSION"
+        created_tags+=("codegen/go/v$VERSION")
+    fi
+
+    if [ ${#created_tags[@]} -gt 0 ]; then
+        log_success "Created tags: ${created_tags[*]}"
+    else
+        log_warning "All tags already exist - skipping tag creation"
+    fi
 fi
 
 # Step 6: Push to trigger CI/CD
@@ -313,10 +341,29 @@ if [ "$DRY_RUN" = true ]; then
 else
     log_info "Pushing changes and tags to trigger GitHub Actions..."
     git push origin main
-    git push origin "v$VERSION"
-    git push origin "codegen/go/v$VERSION"
 
-    log_success "Pushed to GitHub - CI/CD pipeline started"
+    # Push tags only if they were newly created
+    pushed_tags=()
+
+    # Check if main version tag needs to be pushed
+    if ! git ls-remote --tags origin | grep -q "refs/tags/v$VERSION$"; then
+        git push origin "v$VERSION" 2>/dev/null && pushed_tags+=("v$VERSION") || log_warning "Tag v$VERSION may already exist on remote"
+    else
+        log_warning "Tag v$VERSION already exists on remote - skipping push"
+    fi
+
+    # Check if Go module tag needs to be pushed
+    if ! git ls-remote --tags origin | grep -q "refs/tags/codegen/go/v$VERSION$"; then
+        git push origin "codegen/go/v$VERSION" 2>/dev/null && pushed_tags+=("codegen/go/v$VERSION") || log_warning "Tag codegen/go/v$VERSION may already exist on remote"
+    else
+        log_warning "Tag codegen/go/v$VERSION already exists on remote - skipping push"
+    fi
+
+    if [ ${#pushed_tags[@]} -gt 0 ]; then
+        log_success "Pushed tags to GitHub: ${pushed_tags[*]} - CI/CD pipeline started"
+    else
+        log_success "Changes pushed to GitHub - CI/CD pipeline may already be running"
+    fi
 
     # Wait a moment for GitHub Actions to start
     sleep 5
