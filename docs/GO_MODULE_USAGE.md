@@ -141,4 +141,4 @@ func main() {
 ---
 
 *This documentation is automatically generated from the actual Go codegen output.*
-*Last updated: 2025-11-04T22:09:06.606Z*
+*Last updated: 2025-11-04T22:11:52.482Z*
